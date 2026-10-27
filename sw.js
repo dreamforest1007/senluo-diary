@@ -1,5 +1,5 @@
 /* 森羅生活：僅快取此網站必要的靜態檔案；個人資料僅保留在瀏覽器 localStorage。 */
-const CACHE_NAME = 'sylva-life-static-v4-cloudbackup-20261027';
+const CACHE_NAME = 'sylva-life-static-v5-history-20261027';
 const APP_SHELL = [
   './', './index.html', './manifest.webmanifest',
   './icons/icon-192.png', './icons/icon-512.png',
