@@ -1,0 +1,37 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isOwner(userId) {
+      return request.auth != null
+        && request.auth.uid == userId;
+    }
+
+    function validBackup() {
+      return request.resource.data.keys().hasAll([
+          'format', 'payload', 'savedAt', 'clientSavedAt'
+        ])
+        && request.resource.data.keys().hasOnly([
+          'format', 'payload', 'savedAt', 'clientSavedAt'
+        ])
+        && request.resource.data.format == 'sylva-life-snapshot-v1'
+        && request.resource.data.payload is string
+        && request.resource.data.payload.toUtf8().size() <= 600000
+        && request.resource.data.savedAt is timestamp
+        && request.resource.data.clientSavedAt is string;
+    }
+
+    match /users/{userId}/backups/latest {
+      allow get: if isOwner(userId);
+      allow create, update: if isOwner(userId) && validBackup();
+      allow delete: if false;
+
+      match /versions/{versionId} {
+        allow get, list: if isOwner(userId);
+        allow create: if isOwner(userId) && validBackup();
+        allow update, delete: if false;
+      }
+    }
+  }
+}
