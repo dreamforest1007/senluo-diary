@@ -1,6 +1,44 @@
 :root[data-theme="tea"]{--bg:#f8f2e7;--card:#fffaf1;--forest:#795238;--dark:#513622;--sage:#eee0ce;--ink:#413529;--muted:#786b5b;--line:#e5d7c3}
 :root[data-theme="sea"]{--bg:#eef7f7;--card:#fbffff;--forest:#286d7b;--dark:#174b59;--sage:#dceef0;--ink:#23414a;--muted:#617c83;--line:#d0e5e8}
 :root[data-theme="lavender"]{--bg:#f5f0f9;--card:#fffcff;--forest:#765488;--dark:#51375f;--sage:#ece0f1;--ink:#43344e;--muted:#7c6a86;--line:#e3d7eb}
+:root[data-theme="spring"]{--bg:#fff5e8;--card:#fffcf5;--forest:#a33232;--dark:#702323;--sage:#f4e4c5;--ink:#4b2924;--muted:#846448;--line:#ead5af;--festive-accent:#dfb65c}
+:root[data-theme="lantern"]{--bg:#f8f0f7;--card:#fffafd;--forest:#694573;--dark:#472e52;--sage:#eee0ef;--ink:#49324d;--muted:#7d6481;--line:#e6d3e8;--festive-accent:#eac77b}
+:root[data-theme="dragon"]{--bg:#f1f6e9;--card:#fdfff6;--forest:#46693d;--dark:#30472c;--sage:#e2ebd1;--ink:#35432f;--muted:#697b5e;--line:#d7e1c5;--festive-accent:#d5cb8f}
+:root[data-theme="moon"]{--bg:#f5f3ec;--card:#fffdf7;--forest:#3e557a;--dark:#293a58;--sage:#e3e8ef;--ink:#303b51;--muted:#68748a;--line:#dce0e8;--festive-accent:#dfbc75}
+:root[data-theme="pumpkin"]{--bg:#fff4e9;--card:#fffaf4;--forest:#794553;--dark:#503343;--sage:#f3dfc8;--ink:#4d3541;--muted:#826675;--line:#e7cdb8;--festive-accent:#eead69}
+:root[data-theme="christmas"]{--bg:#f5f8f3;--card:#fffdf7;--forest:#275b48;--dark:#193f33;--sage:#e2eee5;--ink:#283f34;--muted:#64796b;--line:#d6e2d9;--festive-accent:#e6b3ad}
+:root[data-theme="sunny"]{--bg:#eff8ff;--card:#fffef8;--forest:#356982;--dark:#254b61;--sage:#e0eef4;--ink:#294353;--muted:#607d8d;--line:#d2e3ec;--festive-accent:#ecc774}
+:root[data-theme="rainy"]{--bg:#edf3f3;--card:#f9fcfa;--forest:#496c77;--dark:#304953;--sage:#dfe9e6;--ink:#33484b;--muted:#647d81;--line:#cfdeda;--festive-accent:#c8d6ce}
+:root[data-theme="snow"]{--bg:#f5f9fc;--card:#ffffff;--forest:#526d88;--dark:#3b5066;--sage:#e4edf3;--ink:#3a4856;--muted:#6b8195;--line:#d8e4ed;--festive-accent:#dbc2a6}
+:root[data-theme="cat"]{--bg:#f7f0e6;--card:#fffcf5;--forest:#57463d;--dark:#3a302b;--sage:#eadfce;--ink:#453b34;--muted:#7b6a59;--line:#e0d0ba;--festive-accent:#cdaa75}
+:root[data-theme="rabbit"]{--bg:#f5f7ec;--card:#fffff8;--forest:#63764b;--dark:#455337;--sage:#e7eddb;--ink:#414b35;--muted:#738264;--line:#dce3ce;--festive-accent:#edc9bf}
+:root[data-theme="deer"]{--bg:#f3f3e8;--card:#fffdf5;--forest:#5a6843;--dark:#3b472f;--sage:#e5e8d6;--ink:#40492e;--muted:#74815e;--line:#dbdfc6;--festive-accent:#c99f73}
+:root[data-theme="fern"]{--bg:#eef5e9;--card:#fcfff7;--forest:#37664b;--dark:#244b36;--sage:#dcebd5;--ink:#304632;--muted:#657c5e;--line:#cfe0c5;--festive-accent:#aac58b}
+:root[data-theme="lotus"]{--bg:#fbf2f2;--card:#fffaf9;--forest:#557b72;--dark:#37574f;--sage:#e4eeea;--ink:#3d514b;--muted:#71837c;--line:#dedfd4;--festive-accent:#e6b5bc}
+:root[data-theme="camellia"]{--bg:#fff5f1;--card:#fffdfa;--forest:#914d60;--dark:#633646;--sage:#f3e0e3;--ink:#593a44;--muted:#936d77;--line:#ecd4d7;--festive-accent:#e3b2ad}
+.festival-sunny{background:radial-gradient(ellipse at 95% 100%,#fff2 0 30%,transparent 31%),var(--dark)}.festival-sunny .festivalSymbol{color:#f4d483}
+.festival-rainy{background:repeating-linear-gradient(110deg,transparent 0 18px,#d7e9e81a 19px 20px,transparent 21px 36px),var(--dark)}
+.festival-snow{background:radial-gradient(circle,#fff5 1px,transparent 2px) 0 0/27px 35px,var(--dark)}.festival-snow .festivalSymbol{color:#d7e9fb}
+.festival-cat .festivalDecor,.festival-rabbit .festivalDecor,.festival-deer .festivalDecor{border-radius:50%;background:#fff1}
+.festival-fern{background:repeating-linear-gradient(40deg,transparent 0 36px,#c6e4b00b 37px 44px,transparent 45px 70px),var(--dark)}
+.festival-lotus{background:repeating-radial-gradient(ellipse at 90% 100%,transparent 0 18px,#e6b5bc15 19px 20px,transparent 21px 40px),var(--dark)}
+.festival-camellia{background:radial-gradient(circle at 95% 10%,#e3b2ad22 0 35px,transparent 36px),var(--dark)}
+.festivalChoices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.festivalChoice{display:grid;gap:10px;padding:18px;text-align:left;border:1px solid var(--line);border-radius:18px;background:var(--card);color:var(--ink);min-width:0;line-height:1.6}
+.festivalChoice.selected{border:2px solid var(--forest);padding:17px;box-shadow:0 0 0 3px var(--sage)}
+.festivalChoice>span:last-child{font-size:12px;color:var(--muted)}.themeSwatches{display:flex;gap:6px}.themeSwatches i{width:24px;height:24px;border-radius:50%;border:1px solid #0002}
+.festivalAuto{border:1px solid var(--line);background:var(--bg);padding:18px;border-radius:16px;margin:20px 0}.festivalAuto p{margin-bottom:0}
+.festivalBanner{position:relative;isolation:isolate;display:flex;align-items:center;gap:20px;min-height:140px;background:var(--dark);color:#fff8e9;padding:24px 30px;border:1px solid var(--festive-accent);border-radius:22px;overflow:hidden;margin-bottom:18px}
+.festivalBanner:after{content:'';position:absolute;inset:8px;z-index:-1;border:1px solid #fff3;border-radius:15px;pointer-events:none}.festivalCopy{position:relative;z-index:1}.festivalLabel{font-size:12px;letter-spacing:3px;color:var(--festive-accent);font-weight:700}.festivalCopy p{font-size:20px;font-weight:700;line-height:1.7;margin:9px 0 0}
+.festivalDecor{flex:0 0 90px;position:relative;height:90px;display:grid;place-items:center}.festivalSymbol{font-size:55px;line-height:1}.festivalAccent{position:absolute;right:0;bottom:0;color:var(--festive-accent);font-size:24px}
+.festival-spring{background:radial-gradient(circle at 100% 0,#cf714344,transparent 65%),var(--dark)}
+.festival-spring .festivalSymbol{font-size:0;width:54px;height:65px;border:2px solid #e6bd6c;border-radius:45%;background:repeating-linear-gradient(90deg,#bd3e36 0 12px,#d15b42 13px 15px);position:relative;box-shadow:0 0 20px #f2b94b30}
+.festival-spring .festivalSymbol:before{content:'';position:absolute;width:2px;height:24px;background:#e6bd6c;top:-24px;left:24px}.festival-spring .festivalSymbol:after{content:'';position:absolute;width:15px;height:19px;border:2px solid #e6bd6c;border-top:0;bottom:-20px;left:17px}.festival-spring .festivalAccent{border:1px solid currentColor;font-size:18px;padding:2px 6px;right:-6px;bottom:-6px}
+.festival-lantern{background:radial-gradient(circle at 10% 25%,#eac77b33,transparent 35%),var(--dark)}.festival-lantern .festivalSymbol{color:#ffe1a1;text-shadow:0 0 22px #f3d596}
+.festival-dragon{background:repeating-linear-gradient(125deg,transparent 0 35px,#d5cb8f0c 36px 38px),var(--dark)}
+.festival-moon .festivalSymbol{font-size:0;background:#f0d9a1;border-radius:50%;width:66px;height:66px;box-shadow:0 0 30px #efdba34a}.festival-moon .festivalAccent{color:#e2bd73}
+.festival-christmas{background:radial-gradient(circle at 85% 20%,#fff7 1px,transparent 2px) 0 0/24px 30px,var(--dark)}
+@media(max-width:720px){.festivalChoices{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.festivalChoice{padding:14px;min-height:135px}.festivalChoice.selected{padding:13px}.festivalBanner{gap:14px;padding:22px 18px;min-height:130px}.festivalDecor{flex-basis:60px;height:80px}.festivalSymbol{font-size:44px}.festivalCopy p{font-size:17px}.festivalPreview .festivalBanner{margin-bottom:0}}
 html[data-theme] body{background:var(--bg);color:var(--ink)}
 html[data-theme] .sidebar{background:var(--dark)}html[data-theme] .hero{background:linear-gradient(110deg,var(--dark),var(--forest))}
 html[data-theme] .card,html[data-theme] .mobile-nav,html[data-theme] .installSheet{background:var(--card)}
