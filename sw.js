@@ -1,9 +1,9 @@
 /* 森羅生活：僅快取此網站必要的靜態檔案；個人資料僅保留在瀏覽器 localStorage。 */
-const CACHE_NAME = 'sylva-life-static-v8-v5-20261102';
+const CACHE_NAME = 'sylva-life-static-v9-v5-0-1-20261102';
 const APP_SHELL = [
-  './', './index.html', './manifest.webmanifest', './v3.js', './v3.css',
-  './icons/icon-192.png', './icons/icon-512.png',
-  './icons/icon-maskable-512.png', './icons/apple-touch-icon.png'
+  './', './index.html', './manifest.webmanifest?v=5.0.1', './v3.js', './v3.css',
+  './icon-192-v5.png?v=5.0.1', './icon-512-v5.png?v=5.0.1',
+  './icon-maskable-512-v5.png?v=5.0.1', './apple-touch-icon-v5.png?v=5.0.1'
 ];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL)).then(() => self.skipWaiting()));
