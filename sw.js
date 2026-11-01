@@ -1,7 +1,7 @@
 /* 森羅生活：僅快取此網站必要的靜態檔案；個人資料僅保留在瀏覽器 localStorage。 */
-const CACHE_NAME = 'sylva-life-static-v5-history-20261027';
+const CACHE_NAME = 'sylva-life-static-v6-v3-20261101';
 const APP_SHELL = [
-  './', './index.html', './manifest.webmanifest',
+  './', './index.html', './manifest.webmanifest', './v3.js', './v3.css',
   './icons/icon-192.png', './icons/icon-512.png',
   './icons/icon-maskable-512.png', './icons/apple-touch-icon.png'
 ];
@@ -21,8 +21,8 @@ self.addEventListener('fetch', event => {
   if (request.method !== 'GET') return;
   const url = new URL(request.url);
   if (url.origin !== self.location.origin || !url.pathname.startsWith(new URL(self.registration.scope).pathname)) return;
-  if (request.mode === 'navigate') {
-    event.respondWith(fetch(request).catch(() => caches.match('./index.html')));
+  if (request.mode === 'navigate' || /\.(?:js|css)$/.test(url.pathname)) {
+    event.respondWith(fetch(request).catch(() => caches.match(request.mode === 'navigate' ? './index.html' : request)));
     return;
   }
   event.respondWith(caches.match(request).then(hit => hit || fetch(request)));

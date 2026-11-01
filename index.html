@@ -53,9 +53,10 @@
 .accountInfo strong{color:#1b543a}
 .accountInfo .small{font-size:12px;color:#576e5b}
 @media(max-width:720px){.top{align-items:flex-start;flex-wrap:wrap}.headerActions{flex-wrap:wrap;justify-content:flex-end}.authPill{max-width:135px}.accountGate{margin:10px 0;padding:24px 16px}}
-</style></head>
-<body><div class="layout"><aside class="sidebar"><div class="brand"><div class="brandmark">森</div><div><strong>SYLVA LIFE</strong><small>森羅之心 × 森日記</small></div></div><nav class="nav" id="nav"></nav><div class="sidebar-note">一套系統，整理生活。<br/>帳號測試版：紀錄目前仍儲存於本機，請定期匯出備份。</div></aside><main class="main"><div class="top"><div><div class="overline">SYLVA LIFE · PERSONAL SPACE</div><h1 id="pageTitle">生活總覽</h1></div><div class="headerActions"><div class="datebar" id="dateNow"></div><button id="installApp" type="button" class="btn installAction">＋ 加到桌面</button><div id="accountControls" class="authControls"></div></div></div><div id="storageNotice"></div><div id="content"></div><div class="footer">森羅之心 × 森日記 · 雲端歷史備份 V2 測試版 · 不會自動同步</div></main></div><nav class="mobile-nav" id="mobileNav"></nav><div class="mobile-more hide" id="mobileMore"></div><div class="toast" id="toast" role="status"></div>
+</style><link rel="stylesheet" href="./v3.css"/></head>
+<body><div class="layout"><aside class="sidebar"><div class="brand"><div class="brandmark">森</div><div><strong>SYLVA LIFE</strong><small>森羅之心 × 森日記</small></div></div><nav class="nav" id="nav"></nav><div class="sidebar-note">一套系統，整理生活。<br/>帳號測試版：紀錄目前仍儲存於本機，請定期匯出備份。</div></aside><main class="main"><div class="top"><div><div class="overline">SYLVA LIFE · PERSONAL SPACE</div><h1 id="pageTitle">生活總覽</h1></div><div class="headerActions"><div class="datebar" id="dateNow"></div><button id="installApp" type="button" class="btn installAction">＋ 加到桌面</button><div id="accountControls" class="authControls"></div></div></div><div id="storageNotice"></div><div id="content"></div><div class="footer">森羅之心 × 森日記 · V3 · 歷史備份與個人化 · 不會自動同步</div></main></div><nav class="mobile-nav" id="mobileNav"></nav><div class="mobile-more hide" id="mobileMore"></div><div class="toast" id="toast" role="status"></div>
 <dialog id="installHelp" aria-labelledby="installTitle"><div class="installSheet"><div class="row between"><h2 id="installTitle">安裝森羅生活</h2><button id="closeInstall" type="button" class="btn subtle sm">關閉</button></div><p>把網頁部署到 HTTPS 網址後，使用 Android Chrome 開啟，即可安裝成手機主畫面的獨立 APP。</p><ol><li>以 Chrome 開啟部署好的森羅生活網址。</li><li>點選右上角「⋮」選單，選擇「安裝應用程式」或「加到主畫面」。</li><li>完成後，從手機桌面點選「森羅生活」圖示啟動。</li></ol><p class="note">若你現在開啟的是下載的 HTML 檔案（content:// 或 file://），它只能預覽，無法直接變成正式可安裝的 PWA。請使用完整網站套件上傳至 HTTPS 網站。</p><p class="note">資料存於該網站的瀏覽器空間，安裝前請先到「備份與設定」匯出舊資料，再到新版匯入。</p></div></dialog>
+<script src="./v3.js"></script>
 <script>
 'use strict';
 const K='sylva_life_merge_v1';
@@ -130,7 +131,7 @@ function field(label,input){return `<div class="field"><label>${label}</label>${
 function stat(label,value,note){return `<div class="card"><div class="stat-label">${label}</div><div class="metric">${value}</div><div class="tiny muted">${note}</div></div>`}
 function nav(){const html=pages.map(([k,name,i])=>`<button data-page="${k}" class="${view===k?'active':''}">${ico(i)}<span>${name}</span></button>`).join('');$('#nav').innerHTML=html;let mobile=['home','diary','tasks','finance','settings'];$('#mobileNav').innerHTML=pages.filter(a=>mobile.includes(a[0])).map(([k,n,i])=>`<button ${k==='settings'?'data-more="1"':`data-page="${k}"`} class="${view===k?'active':''}">${ico(i)}<span>${k==='settings'?'更多':n}</span></button>`).join('');$('#mobileMore').innerHTML=pages.filter(a=>!mobile.includes(a[0])||a[0]==='settings').map(([k,n])=>`<button data-page="${k}">${n}</button>`).join('')}
 function go(k){view=k;$('#mobileMore').classList.add('hide');history.replaceState(null,'','#'+view);render();window.scrollTo({top:0,behavior:'instant'})}
-function render(){updateAccountView();if(authMode==='account'&&!accountUser){$('#pageTitle').textContent='登入森羅生活';$('#nav').innerHTML='';$('#mobileNav').innerHTML='';$('#mobileMore').innerHTML='';$('#storageNotice').innerHTML='';$('#content').innerHTML=accountGateHtml();return;}nav();$('#storageNotice').innerHTML=storageUsable?'':'<div class="notice warning" style="margin-bottom:16px"><strong>目前瀏覽器禁止本機自動儲存。</strong>這個頁面仍可操作，但關閉後可能遺失資料。請在「備份與設定」下載 JSON 備份檔。</div>';$('#pageTitle').textContent=pages.find(p=>p[0]===view)?.[1]||'生活總覽';$('#dateNow').textContent=new Intl.DateTimeFormat('zh-TW',{year:'numeric',month:'long',day:'numeric',weekday:'short'}).format(new Date());const f={home:homePage,diary:diaryPage,tasks:tasksPage,calendar:calendarPage,finance:financePage,goals:goalsPage,health:healthPage,lists:listsPage,focus:focusPage,hub:hubPage,settings:settingsPage};$('#content').innerHTML=f[view]();if(view==='focus')drawTimer()}
+function render(){updateAccountView();if(authMode==='account'&&!accountUser){$('#pageTitle').textContent='登入森羅生活';$('#nav').innerHTML='';$('#mobileNav').innerHTML='';$('#mobileMore').innerHTML='';$('#storageNotice').innerHTML='';$('#content').innerHTML=accountGateHtml();return;}nav();$('#storageNotice').innerHTML=storageUsable?'':'<div class="notice warning" style="margin-bottom:16px"><strong>目前瀏覽器禁止本機自動儲存。</strong>這個頁面仍可操作，但關閉後可能遺失資料。請在「備份與設定」下載 JSON 備份檔。</div>';$('#pageTitle').textContent=pages.find(p=>p[0]===view)?.[1]||'生活總覽';$('#dateNow').textContent=new Intl.DateTimeFormat('zh-TW',{year:'numeric',month:'long',day:'numeric',weekday:'short'}).format(new Date());const f={home:homePage,diary:diaryPage,tasks:tasksPage,calendar:calendarPage,finance:financePage,goals:goalsPage,health:healthPage,lists:listsPage,focus:focusPage,hub:hubPage,settings:settingsPage};$('#content').innerHTML=f[view]();if(view==='focus')drawTimer();v3Apply()}
 function taskDue(t){return !t.done&&t.due&&t.due<=today()}
 function notes(){let n=[];const due=db.tasks.filter(taskDue);if(due.length)n.push({title:`有 ${due.length} 項任務已到期`,detail:'可到任務管理檢視今天與逾期的待辦。',page:'tasks'});const monthTx=db.tx.filter(t=>t.date?.startsWith(today().slice(0,7)));const spent=monthTx.filter(t=>t.type==='expense').reduce((s,t)=>s+num(t.amount),0);if(db.budget>0&&spent>=db.budget*.8)n.push({title:spent>db.budget?'本月支出超過預算':'本月支出已達預算的 80%',detail:`已支出 ${money(spent)}，預算 ${money(db.budget)}。`,page:'finance'});const dates=db.events.filter(e=>e.date===today());if(dates.length)n.push({title:`今天有 ${dates.length} 個行程`,detail:dates.map(e=>e.title).slice(0,2).join('、'),page:'calendar'});const ms=db.goals.filter(g=>g.target>0&&num(g.current)>=num(g.target));if(ms.length)n.push({title:`有 ${ms.length} 項目標達標`,detail:'恭喜！可以到目標頁確認成果。',page:'goals'});if(!n.length)n.push({title:'目前沒有需要特別提醒的事項',detail:'這裡會依據你在本機記錄的任務、行程與預算顯示提示。',page:'tasks'});return n}
 
@@ -195,14 +196,14 @@ function settingsPage(){
  const accountSettings=signedIn
  ? `<div class="card span12">${heading('Google 帳號與資料保護')}<div class="accountInfo"><strong>已登入：${esc(accountUser.name||'Google 帳號')}</strong><div class="small">${esc(accountUser.email)}</div><div class="small">帳號資料仍先存於本手機；只有主動按下「上傳雲端備份」才會傳到 Firestore。</div></div><div class="stack">${hasGuestData()?'<button class="btn subtle" data-action="migrateLegacy">複製舊版未登入的本機紀錄到目前帳號</button>':''}<button class="btn subtle" data-action="googleLogout">登出 Google 帳號</button></div><p class="note">登出會隱藏帳號紀錄，不會刪除本機副本。自動跨裝置同步與端對端加密尚未啟用。請另外保留 JSON 備份。</p></div>`
  : `<div class="card span12">${heading('Google 帳號登入')}<p class="note">目前使用原本的本機模式，資料沒有 Google 帳號保護。可以登入後選擇是否複製舊資料。</p><button class="btn" data-action="googleLogin">使用 Google 帳號登入</button></div>`;
- return `<div class="grid">${accountSettings}<div class="card span6">${heading('個人設定')}<form data-form="settings" class="stack">${field('顯示稱呼（選填）',`<input name="name" maxlength="30" placeholder="例如：森林" value="${esc(db.settings.name||'')}"/>`)}<div class="note">這個名稱只會出現在首頁問候文字中，不會傳送到伺服器。</div><button class="btn" type="submit">儲存設定</button></form><div class="sep"></div>${heading('資料概況')}<div class="note">日記 ${db.diaries.length} 篇 · 任務 ${db.tasks.length} 項 · 收支 ${db.tx.length} 筆 · 行程 ${db.events.length} 筆</div></div><div class="card span6">${heading('資料備份與還原')}<p class="note">目前使用瀏覽器 localStorage。清除網站資料、使用不同瀏覽器或更換手機，紀錄可能消失。請定期備份。</p><div class="stack"><button class="btn" data-action="export">下載完整 JSON 備份</button><label class="btn subtle" style="text-align:center;cursor:pointer">匯入 JSON 備份<input id="importInput" type="file" accept=".json,application/json" style="display:none"/></label><button class="btn danger" data-action="reset">清空所有資料</button></div><div class="sep"></div><div class="notice warning">匯入會覆蓋目前這個瀏覽器裡的全部紀錄。請先備份再操作。</div></div>${signedIn?`<div class="card span12">${heading('Google 雲端備份與歷史版本（V2 測試）')}
+ return `<div class="grid">${accountSettings}<div class="card span6">${heading('個人設定')}<form data-form="settings" class="stack">${field('顯示稱呼（選填）',`<input name="name" maxlength="30" placeholder="例如：森林" value="${esc(db.settings.name||'')}"/>`)}<div class="note">稱呼用於首頁問候；主動上傳雲端備份時，會連同外觀設定一起備份。</div><button class="btn" type="submit">儲存設定</button></form><div class="sep"></div>${heading('資料概況')}<div class="note">日記 ${db.diaries.length} 篇 · 任務 ${db.tasks.length} 項 · 收支 ${db.tx.length} 筆 · 行程 ${db.events.length} 筆</div></div><div class="card span6">${heading('資料備份與還原')}<p class="note">目前使用瀏覽器 localStorage。清除網站資料、使用不同瀏覽器或更換手機，紀錄可能消失。請定期備份。</p><div class="stack"><button class="btn" data-action="export">下載完整 JSON 備份</button><label class="btn subtle" style="text-align:center;cursor:pointer">匯入 JSON 備份<input id="importInput" type="file" accept=".json,application/json" style="display:none"/></label><button class="btn danger" data-action="reset">清空所有資料</button></div><div class="sep"></div><div class="notice warning">匯入會覆蓋目前這個瀏覽器裡的全部紀錄。請先備份再操作。</div></div>${signedIn?`<div class="card span12">${heading('Google 雲端備份與歷史版本（V3）')}${v3BackupStatus()}
 <p class="note">只有妳按「上傳雲端備份」時，才會把目前 Google 帳號的日記、任務、財務與生活紀錄存進 Cloud Firestore。沒有自動同步，也不是端對端加密。請先只用測試任務驗證，不要上傳敏感日記。</p>
 <div class="stack">
 <button class="btn" data-action="cloudBackup">上傳目前帳號的雲端備份</button>
 <button class="btn subtle" data-action="cloudRestore">檢查／還原雲端備份</button> <button class="btn subtle" data-action="cloudHistory">查看／還原歷史備份（最近 5 份）</button>
 </div>
 <div class="notice warning" style="margin-top:12px">新版上傳會更新最新備份並建立不可覆寫的歷史版本；還原會先顯示日期與筆數，經過第二次確認才覆蓋此手機上這個帳號的本機資料。操作前請留存 JSON 檔。跨裝置更動不會即時同步。</div>
-</div>`:''}<div class="card span12">${heading('安全與隱私')}<p class="note">Google 帳號模式支援「手動」上傳與還原 Firestore 雲端備份，日記及財務資料不會自行同步；沒按上傳前仍只在本機。雲端備份與歷史版本會儲存在妳的 Firebase 專案，受 Firestore 規則保護但非端對端加密；本機不同帳號以獨立鍵值儲存，也不是加密保險箱；共用裝置仍有風險。離線時原本的本機模式可以使用，Google 帳號驗證需網路。請保留 JSON 備份，不要清除網站資料。</p></div></div>`}
+</div>`:''}${v3Settings()}<div class="card span12">${heading('安全與隱私')}<p class="note">Google 帳號模式支援「手動」上傳與還原 Firestore 雲端備份，日記及財務資料不會自行同步；沒按上傳前仍只在本機。雲端備份與歷史版本會儲存在妳的 Firebase 專案，受 Firestore 規則保護但非端對端加密；本機不同帳號以獨立鍵值儲存，也不是加密保險箱；共用裝置仍有風險。離線時原本的本機模式可以使用，Google 帳號驗證需網路。請保留 JSON 備份，不要清除網站資料。</p></div></div>`}
 function handleForm(e){const form=e.target.closest('form[data-form]');if(!form)return;e.preventDefault();const f=Object.fromEntries(new FormData(form).entries()),type=form.dataset.form;const required=v=>String(v||'').trim();switch(type){
 case 'diary':{const prev=db.diaries.find(d=>d.date===f.date);if(!required(f.body)){toast('請先輸入日記內容');return}if(prev){Object.assign(prev,{mood:f.mood,body:f.body,tags:f.tags})}else db.diaries.push({id:id(),date:f.date,mood:f.mood,body:f.body,tags:f.tags});diaryDate=f.date;break}
 case 'task':db.tasks.push({id:id(),title:required(f.title),due:f.due,category:required(f.category)||'一般',quadrant:f.quadrant,done:false});break;
@@ -259,6 +260,8 @@ async function cloudBackupManual(){
  if(cloudUserId()!==uid)throw new Error('account-changed');
  await api.save(uid,snapshot);
  if(cloudUserId()!==uid)throw new Error('account-changed');
+ const statusSaved=v3MarkBackup(snapshot);render();
+ if(!statusSaved)toast('雲端備份已完成，但此裝置無法儲存備份時間');
  alert('雲端備份完成！已保存最新備份及歷史版本，共 '+count+' 筆紀錄。請繼續保留手機裡的 JSON 備份。');
  }catch(e){
   const m=e.message||'';
@@ -274,17 +277,19 @@ async function cloudRestoreHistoryManual(){
   const api=cloudBridge(uid),versions=await api.listVersions(uid);
   if(cloudUserId()!==uid)throw new Error('account-changed');
   if(!versions.length){alert('目前還沒有歷史版本。原本的「最新備份」仍可正常使用；第一次使用 V2 上傳後才會建立歷史備份。');return;}
-  const lines=versions.map((v,i)=>(i+1)+'｜'+v.savedAtText+'｜'+v.count+' 筆').join('\n');
-  const answer=prompt('選擇想要查看／還原的歷史版本（輸入 1 到 '+versions.length+'）：\n\n'+lines+'\n\n按取消不會修改任何資料。','');
-  if(answer===null||answer.trim()==='')return;
-  if(!/^[1-5]$/.test(answer.trim())||Number(answer)>versions.length){alert('請輸入清單中的有效序號。');return;}
-  const chosen=versions[Number(answer)-1];
+  const versionId=await v3PickVersion(versions);
+  if(versionId===null)return;
+  if(cloudUserId()!==uid)throw new Error('account-changed');
+  const chosen=versions.find(v=>v.id===versionId);
+  if(!chosen)throw new Error('bad-data');
   const result=await api.readVersion(uid,chosen.id);
   if(cloudUserId()!==uid)throw new Error('account-changed');
   if(!result){alert('這個歷史版本不存在或已無法讀取。');return;}
   if(!result.snapshot||!Array.isArray(result.snapshot.diaries)||!Array.isArray(result.snapshot.tasks)||!Array.isArray(result.snapshot.tx))throw new Error('bad-data');
   const clean=sanitize(result.snapshot);
   const cloudCount=datasetCount(clean),localCount=datasetCount(db);
+  if(!await v3Preview(result,clean))return;
+  if(cloudUserId()!==uid)throw new Error('account-changed');
   if(!confirm('已找到選取的歷史版本：\n儲存時間：'+result.savedAtText+'\n歷史版本紀錄：'+cloudCount+' 筆\n手機現有紀錄：'+localCount+' 筆\n\n繼續將用這份歷史版本覆蓋目前 Google 帳號的本機資料（不會改寫雲端）。確定下一步？'))return;
   if(!confirm('最後確認：妳是否已另存目前本機資料的 JSON 備份？按確定會覆蓋本機，按取消則保留所有資料。'))return;
   if(cloudUserId()!==uid)throw new Error('account-changed');
