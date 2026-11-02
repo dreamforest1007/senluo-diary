@@ -53,7 +53,7 @@
 .accountInfo strong{color:#1b543a}
 .accountInfo .small{font-size:12px;color:#576e5b}
 @media(max-width:720px){.top{align-items:flex-start;flex-wrap:wrap}.headerActions{flex-wrap:wrap;justify-content:flex-end}.authPill{max-width:135px}.accountGate{margin:10px 0;padding:24px 16px}}
-</style><link rel="stylesheet" href="./v3.css?v=7.0.1"/></head>
+</style><link rel="stylesheet" href="./v3.css?v=7.0.2"/></head>
 <body><div class="layout"><aside class="sidebar"><div class="brand"><div class="brandmark"><img src="./icon-192-v5.png?v=5.0.1" alt="森羅生活" width="43" height="43" style="display:block;border-radius:14px"/></div><div><strong>SYLVA LIFE</strong><small>森羅之心 × 森日記</small></div></div><nav class="nav" id="nav"></nav><div class="sidebar-note">一套系統，整理生活。<br/>紀錄先儲存在此裝置。<br/>可在帳號與備份開啟自動同步。</div></aside><main class="main"><div class="top"><div><div class="overline">SYLVA LIFE · PERSONAL SPACE</div><h1 id="pageTitle">生活總覽</h1></div><div class="headerActions"><div class="datebar" id="dateNow"></div><button id="installApp" type="button" class="btn installAction">＋ 加到桌面</button><div id="accountControls" class="authControls"></div></div></div><div id="storageNotice"></div><div id="content"></div></main></div><nav class="mobile-nav" id="mobileNav"></nav><div class="mobile-more hide" id="mobileMore"></div><div class="toast" id="toast" role="status"></div>
 <dialog id="installHelp" aria-labelledby="installTitle"><div class="installSheet"><div class="row between"><h2 id="installTitle">安裝森羅生活</h2><button id="closeInstall" type="button" class="btn subtle sm">關閉</button></div><p>把網頁部署到 HTTPS 網址後，使用 Android Chrome 開啟，即可安裝成手機主畫面的獨立 APP。</p><ol><li>以 Chrome 開啟部署好的森羅生活網址。</li><li>點選右上角「⋮」選單，選擇「安裝應用程式」或「加到主畫面」。</li><li>完成後，從手機桌面點選「森羅生活」圖示啟動。</li></ol><p class="note">若你現在開啟的是下載的 HTML 檔案（content:// 或 file://），它只能預覽，無法直接變成正式可安裝的 PWA。請使用完整網站套件上傳至 HTTPS 網站。</p><p class="note">資料存於該網站的瀏覽器空間，安裝前請先到「帳號與備份」匯出舊資料，再到新版匯入。</p></div></dialog>
 <script>
@@ -74,10 +74,10 @@
  setTimeout(()=>{if(!window.sylvaAppBooted)show();},15000);
 })();
 </script>
-<script src="./v3.js?v=7.0.1"></script>
+<script src="./v3.js?v=7.0.2"></script>
 <script>
 'use strict';
-if(typeof v7Context!=='function'||typeof V3_VERSION==='undefined'||V3_VERSION!=='7.0.1')throw new Error('sylva-runtime-version-mismatch');
+if(typeof v7Context!=='function'||typeof V3_VERSION==='undefined'||V3_VERSION!=='7.0.2')throw new Error('sylva-runtime-version-mismatch');
 const K='sylva_life_merge_v1';
 const DEFAULT={version:1,diaries:[],tasks:[],events:[],tx:[],budget:15000,recurring:[],goals:[],health:[],shopping:[],inventory:[],habits:[],settings:{name:'',theme:'forest'}};
 const pages=[['home','今天','home'],['overview','月度總覽','target'],['diary','森日記','book'],['tasks','任務管理','check'],['calendar','行事曆','calendar'],['finance','財務管理','wallet'],['goals','目標管理','target'],['health','健康紀錄','heart'],['lists','購物與收納','list'],['focus','專注計時','timer'],['hub','智慧中樞','cpu'],['themes','主題館','target'],['settings','帳號與備份','settings'],['more','更多','list']];
