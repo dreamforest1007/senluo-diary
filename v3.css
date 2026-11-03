@@ -96,3 +96,15 @@ html[data-session="loading"] .main,html[data-session="welcome"] .main{padding:24
 .v8PeriodLog .desc{white-space:pre-wrap;overflow-wrap:anywhere}
 .v8PeriodPrivacy{margin-top:22px}
 @media(max-width:900px){.v8PeriodGrid{grid-template-columns:1fr}.v8PeriodLog{flex-wrap:wrap}.v8PeriodLog .grow{flex-basis:65%}.v8PeriodSection .sectionhead{flex-wrap:wrap}}
+
+/* V9 calendar, diary and focus */
+.v8PeriodDays>button.v8PeriodDay{font:inherit;color:var(--ink);background:transparent;min-width:0;min-height:44px;padding:8px 1px;cursor:pointer;border-radius:12px;box-shadow:none}
+.v8PeriodDays>button.recorded{background:var(--dark);color:white}
+.v8PeriodDays>button.estimated{border:2px dashed var(--dark)}
+.v8PeriodDays>button.selected{box-shadow:0 0 0 3px #c6b68a inset}
+.v8PeriodDays>button:focus-visible{outline:3px solid var(--dark);outline-offset:2px}
+.v9DayDetail{margin-top:18px}.v9DayDetail p{margin-bottom:0}
+.v9FocusTopic{font-size:20px;font-weight:700;white-space:pre-wrap;overflow-wrap:anywhere}
+.v9FocusLog{align-items:flex-start}.v9FocusLog .desc{white-space:pre-wrap;overflow-wrap:anywhere}
+.v9MoodExtras{border:1px solid #d4dfd0;border-radius:16px;padding:12px}.v9MoodExtras summary{cursor:pointer}.v9MoodExtras fieldset{margin-top:12px}
+@media(max-width:720px){.v9FocusLog .grow{min-width:0}.v8PeriodDays>button.v8PeriodDay{font-size:14px}}
