@@ -108,3 +108,26 @@ html[data-session="loading"] .main,html[data-session="welcome"] .main{padding:24
 .v9FocusLog{align-items:flex-start}.v9FocusLog .desc{white-space:pre-wrap;overflow-wrap:anywhere}
 .v9MoodExtras{border:1px solid #d4dfd0;border-radius:16px;padding:12px}.v9MoodExtras summary{cursor:pointer}.v9MoodExtras fieldset{margin-top:12px}
 @media(max-width:720px){.v9FocusLog .grow{min-width:0}.v8PeriodDays>button.v8PeriodDay{font-size:14px}}
+
+/* V10: immersive focus covers the app viewport, including phone navigation. */
+html[data-focus-immersive="on"],html[data-focus-immersive="on"] body{overflow:hidden}
+html[data-focus-immersive="on"] .sidebar,html[data-focus-immersive="on"] .top,html[data-focus-immersive="on"] .mobile-nav,html[data-focus-immersive="on"] .mobile-more,html[data-focus-immersive="on"] #storageNotice,html[data-focus-immersive="on"] #toast{display:none!important}
+html[data-focus-immersive="on"] .layout{display:block;min-height:0}
+html[data-focus-immersive="on"] .main{padding:0;margin:0;max-width:none}
+.v10Immersive{position:fixed;inset:0;z-index:50;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8vh;background:var(--bg,#f5f4ea);color:var(--dark);padding:24px;padding-bottom:max(24px,env(safe-area-inset-bottom));box-sizing:border-box}
+.v10Timer{font-size:clamp(72px,19vw,220px);font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1;letter-spacing:-.04em}
+.v10FocusActions{display:flex;justify-content:center;gap:18px;width:min(540px,100%)}
+.v10FocusActions .btn{min-height:60px;flex:1;font-size:clamp(16px,3vw,22px);padding:16px 12px}
+.v10FocusError{max-width:500px;text-align:center;color:var(--ink);line-height:1.8}
+.v10SrOnly{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.v10TaskTabs{margin-bottom:20px}.v10HabitsIntro{margin-bottom:24px}
+.v10HabitGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+.v10HabitWeek{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin:20px 0}
+.v10HabitWeek span{display:flex;flex-direction:column;text-align:center;border-radius:12px;padding:10px 2px;background:#edf3e9;color:var(--ink)}
+.v10HabitWeek span.done{background:var(--dark);color:white}
+.v10HabitWeek small{font-size:11px}.v10HabitGrid h3{overflow-wrap:anywhere}
+.v10CompleteLinked{display:flex;align-items:flex-start;gap:10px;line-height:1.8}
+.v10CompleteLinked input{width:22px;min-width:22px;height:22px;min-height:22px;padding:0;margin-top:3px}
+.v10TodayHabits{margin-top:24px}
+@media(max-width:720px){.v10HabitGrid{grid-template-columns:1fr}.v10HabitGrid .row{flex-wrap:wrap}.v10TaskTabs{display:flex}.v10FocusActions{gap:12px}}
+@media(max-height:450px){.v10Immersive{gap:24px}.v10Timer{font-size:clamp(68px,18vh,120px)}.v10FocusActions .btn{min-height:48px}}
