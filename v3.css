@@ -131,3 +131,16 @@ html[data-focus-immersive="on"] .main{padding:0;margin:0;max-width:none}
 .v10TodayHabits{margin-top:24px}
 @media(max-width:720px){.v10HabitGrid{grid-template-columns:1fr}.v10HabitGrid .row{flex-wrap:wrap}.v10TaskTabs{display:flex}.v10FocusActions{gap:12px}}
 @media(max-height:450px){.v10Immersive{gap:24px}.v10Timer{font-size:clamp(68px,18vh,120px)}.v10FocusActions .btn{min-height:48px}}
+
+.v11Quadrants{margin:0;min-width:0;padding:12px;border:1px solid var(--line);border-radius:20px}
+.v11Quadrants legend{padding:0 6px;font-weight:700;color:var(--muted)}
+.v11QuadrantGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.v11Quadrant{display:flex;align-items:center;justify-content:center;gap:8px;min-height:100px;padding:14px 8px;border:2px solid transparent;border-radius:18px;color:#243b33;font-weight:700;text-align:center;cursor:pointer;line-height:1.6}
+.v11Quadrant input{width:18px;height:18px;margin:0;flex:0 0 18px;accent-color:#245640}
+.v11Quadrant:has(input:checked){border-color:#245640;box-shadow:inset 0 0 0 1px #245640}
+.v11Quadrant:has(input:focus-visible){outline:3px solid #597fba;outline-offset:3px}
+.v11q2{background:#d6eafd}.v11q1{background:#f9d9d8}.v11q4{background:#d9efd8}.v11q3{background:#faedb7}
+.v11MoodFields{display:grid;gap:16px;min-width:0}.v11MoodSelection{padding:14px 16px;border-radius:18px;background:var(--surface2,var(--bg));border:1px solid var(--line)}
+.v11MoodCaption{display:block;color:var(--muted);font-size:14px;font-weight:700;margin-bottom:10px}
+.v11MoodTags{display:flex;flex-wrap:wrap;gap:8px}.v11MoodTag{display:inline-block;max-width:100%;overflow-wrap:anywhere;background:var(--card,#fffef9);color:var(--ink);padding:6px 12px;border-radius:999px;border:1px solid var(--line);line-height:1.6}
+@media(max-width:420px){.v11Quadrants{padding:10px}.v11QuadrantGrid{gap:8px}.v11Quadrant{font-size:14px;min-height:92px;gap:5px;padding:12px 5px}.v11Quadrant input{width:16px;height:16px;flex-basis:16px}}
