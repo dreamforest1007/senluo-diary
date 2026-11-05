@@ -1,7 +1,7 @@
 /* 森羅生活：僅快取此網站必要的靜態檔案；個人資料僅保留在瀏覽器 localStorage。 */
-const CACHE_NAME = 'sylva-life-static-v18-v1010-quadrants-moods-20261104';
+const CACHE_NAME = 'sylva-life-static-v19-v1020-task-board-20261105';
 const APP_SHELL = [
-  './', './index.html', './manifest.webmanifest?v=5.0.1', './v3.js?v=10.1.0', './v3.css?v=10.1.0',
+  './', './index.html', './manifest.webmanifest?v=5.0.1', './v3.js?v=10.2.0', './v3.css?v=10.2.0',
   './icon-192-v5.png?v=5.0.1', './icon-512-v5.png?v=5.0.1',
   './icon-maskable-512-v5.png?v=5.0.1', './apple-touch-icon-v5.png?v=5.0.1'
 ];

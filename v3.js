@@ -46,7 +46,7 @@ function v4ThemeChooser(){const effective=v4EffectiveTheme();return `<h3>日常�
 function v4OriginalChooser(effective){return ['天氣','動物','植物'].map(group=>`<h3 style="margin-top:24px">原創・${group}</h3><div class="festivalChoices">${Object.entries(V4_ORIGINAL).filter(([,f])=>f.group===group).map(([key,f])=>`<button class="festivalChoice ${effective===key?'selected':''}" data-v3-theme="${key}" aria-pressed="${effective===key}"><span class="themeSwatches" aria-hidden="true">${f.colors.map(c=>`<i style="background:${c}"></i>`).join('')}</span><strong><span aria-hidden="true">${f.symbol}</span> ${f.name}</strong><span>${f.detail}</span></button>`).join('')}</div>`).join('');}
 document.addEventListener('click',e=>{if(!e.target.closest('[data-v4-auto]'))return;const old=db.settings.holidayAuto;db.settings.holidayAuto=old!==true;if(save()){render();toast(db.settings.holidayAuto?'已開啟節日自動換色':'已關閉節日自動換色');}else{db.settings.holidayAuto=old;toast('設定未能儲存，請先下載備份');}});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&typeof db!=='undefined'&&!(authMode==='account'&&!accountUser))v3Apply();});
-const V3_VERSION='10.1.0';
+const V3_VERSION='10.2.0';
 const V3_WIDGETS=['本月日記','待辦事項','本月支出','本月結餘','智慧提醒','快捷入口','近期待辦','目標進度'];
 const V3_THEMES={forest:'陽光森林',tea:'暖茶書房',sea:'聽瀾海岸',lavender:'暮色花園',spring:'春節團圓',lantern:'元宵燈火',dragon:'端午青粽',moon:'中秋月桂',pumpkin:'萬聖南瓜',christmas:'聖誕松林',sunny:'晴空漫遊',rainy:'雨聲書窗',snow:'初雪小屋',cat:'黑貓茶館',rabbit:'白兔草原',deer:'小鹿林徑',fern:'蕨葉秘境',lotus:'荷風小築',camellia:'山茶花信'};
 function v3Order(){const a=db.settings.widgetOrder;return [...new Set([...(Array.isArray(a)?a:[]),...V3_WIDGETS.map((_,i)=>i)])].filter(i=>Number.isInteger(i)&&i>=0&&i<V3_WIDGETS.length);}
@@ -176,7 +176,7 @@ function v6Compose(kind,recordId){if(v6Owner()==='locked')return;const spec=V6_K
 function v6QuickPicker(){const kind=({diary:'diary',tasks:'task',finance:'transaction',calendar:'event',health:'health'})[view]||'task';v6Compose(kind);}
 function v6HandleForm(e){if(v10Form(e))return true;if(v9Form(e))return true;if(v8PeriodForm(e))return true;const form=e.target.closest('form[data-form]');if(!form)return false;const modal=form.dataset.form==='v6-record',kind=modal?v6Editor?.kind:form.dataset.form;if(!V6_KINDS[kind]&&!modal)return false;e.preventDefault();
  try{if(!kind||v6Owner()==='locked')throw Error('請先完成登入');const f=v6FormData(form),values=v6Normalize(kind,f);const old=!modal&&['diary','health'].includes(kind)?db[V6_KINDS[kind].key].find(x=>x.date===values.date):null;const editor=modal?v6Editor:{owner:v6Owner(),id:old?.id||null,before:old?JSON.stringify(old):null};
-  if(v6Write(kind,values,editor)){if(modal)document.querySelector('#v6Composer').close();render();toast('已儲存'+V6_KINDS[kind].name);}else if(modal)document.querySelector('#v6FormError').textContent='尚未儲存，請先下載備份並確認裝置空間。';
+  if(v6Write(kind,values,editor)){if(kind==='task'&&!editor.id&&taskFilter==='done')taskFilter='all';if(modal)document.querySelector('#v6Composer').close();render();toast('已儲存'+V6_KINDS[kind].name);}else if(modal)document.querySelector('#v6FormError').textContent='尚未儲存，請先下載備份並確認裝置空間。';
  }catch(error){if(modal&&document.querySelector('#v6FormError'))document.querySelector('#v6FormError').textContent=error.message;else toast(error.message);}return true;
 }
 function v6Key(key){return ({diary:'diaries',task:'tasks'})[key]||key;}
