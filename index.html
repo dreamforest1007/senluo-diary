@@ -53,7 +53,7 @@
 .accountInfo strong{color:#1b543a}
 .accountInfo .small{font-size:12px;color:#576e5b}
 @media(max-width:720px){.top{align-items:flex-start;flex-wrap:wrap}.headerActions{flex-wrap:wrap;justify-content:flex-end}.authPill{max-width:135px}.accountGate{margin:10px 0;padding:24px 16px}}
-</style><link rel="stylesheet" href="./v3.css?v=10.2.0"/></head>
+</style><link rel="stylesheet" href="./v3.css?v=10.3.0"/></head>
 <body><div class="layout"><aside class="sidebar"><div class="brand"><div class="brandmark"><img src="./icon-192-v5.png?v=5.0.1" alt="森羅生活" width="43" height="43" style="display:block;border-radius:14px"/></div><div><strong>SYLVA LIFE</strong><small>森羅之心 × 森日記</small></div></div><nav class="nav" id="nav"></nav><div class="sidebar-note">一套系統，整理生活。<br/>紀錄先儲存在此裝置。<br/>可在帳號與備份開啟自動同步。</div></aside><main class="main"><div class="top"><div><div class="overline">SYLVA LIFE · PERSONAL SPACE</div><h1 id="pageTitle">生活總覽</h1></div><div class="headerActions"><div class="datebar" id="dateNow"></div><button id="installApp" type="button" class="btn installAction">＋ 加到桌面</button><div id="accountControls" class="authControls"></div></div></div><div id="storageNotice"></div><div id="content"></div></main></div><nav class="mobile-nav" id="mobileNav"></nav><div class="mobile-more hide" id="mobileMore"></div><div class="toast" id="toast" role="status"></div>
 <dialog id="installHelp" aria-labelledby="installTitle"><div class="installSheet"><div class="row between"><h2 id="installTitle">安裝森羅生活</h2><button id="closeInstall" type="button" class="btn subtle sm">關閉</button></div><p>把網頁部署到 HTTPS 網址後，使用 Android Chrome 開啟，即可安裝成手機主畫面的獨立 APP。</p><ol><li>以 Chrome 開啟部署好的森羅生活網址。</li><li>點選右上角「⋮」選單，選擇「安裝應用程式」或「加到主畫面」。</li><li>完成後，從手機桌面點選「森羅生活」圖示啟動。</li></ol><p class="note">若你現在開啟的是下載的 HTML 檔案（content:// 或 file://），它只能預覽，無法直接變成正式可安裝的 PWA。請使用完整網站套件上傳至 HTTPS 網站。</p><p class="note">資料存於該網站的瀏覽器空間，安裝前請先到「帳號與備份」匯出舊資料，再到新版匯入。</p></div></dialog>
 <script>
@@ -74,10 +74,10 @@
  setTimeout(()=>{if(!window.sylvaAppBooted)show();},15000);
 })();
 </script>
-<script src="./v3.js?v=10.2.0"></script>
+<script src="./v3.js?v=10.3.0"></script>
 <script>
 'use strict';
-if(typeof v7Context!=='function'||typeof V3_VERSION==='undefined'||V3_VERSION!=='10.2.0')throw new Error('sylva-runtime-version-mismatch');
+if(typeof v7Context!=='function'||typeof V3_VERSION==='undefined'||V3_VERSION!=='10.3.0')throw new Error('sylva-runtime-version-mismatch');
 const K='sylva_life_merge_v1';
 const DEFAULT={version:1,diaries:[],tasks:[],events:[],tx:[],budget:15000,recurring:[],goals:[],health:[],shopping:[],inventory:[],habits:[],settings:{name:'',theme:'forest'}};
 const pages=[['home','今天','home'],['overview','月度總覽','target'],['diary','森日記','book'],['tasks','任務管理','check'],['habits','習慣打卡','check'],['calendar','行事曆','calendar'],['finance','財務管理','wallet'],['goals','目標管理','target'],['health','健康紀錄','heart'],['lists','購物與收納','list'],['focus','專注計時','timer'],['hub','智慧中樞','cpu'],['themes','主題館','target'],['settings','帳號與備份','settings'],['more','更多','list']];
@@ -201,18 +201,21 @@ return `<div class="hero dailyHero"><div class="dailyTop"><div class="overline" 
 function diaryPage(){const d=db.diaries.find(x=>x.date===diaryDate)||{};const history=[...db.diaries].sort((a,b)=>b.date.localeCompare(a.date));return `<div class="grid"><div class="card span7">${heading('今天想記錄什麼？')}<form data-form="diary" class="stack"><div class="row">${field('日期',`<input name="date" type="date" required value="${esc(diaryDate)}" id="diaryDate"/>`)}</div>${v9MoodFields(d)}${field('日記內容',`<textarea name="body" rows="10" placeholder="今天發生了什麼事？不必寫得完美。">${esc(d.body||'')}</textarea>`)}${field('標籤（以逗號分隔）',`<input name="tags" placeholder="生活、心情、旅行" value="${esc(d.tags||'')}"/>`)}<div class="row"><button class="btn" type="submit">儲存這一天</button>${d.id?`<button type="button" class="btn danger" data-delete="diaries" data-id="${esc(d.id)}">刪除紀錄</button>`:''}</div></form></div><div class="card span5">${heading('日記回顧',`<span class="tag">總共 ${history.length} 篇</span>`)}<div class="stack">${history.slice(0,12).map(x=>`<div class="item"><div class="grow"><strong>${fmtDate(x.date)} · ${esc((x.moods||[x.mood||'普通']).join('・'))}</strong><span class="desc">${esc((x.body||'').slice(0,62))}${(x.body||'').length>62?'…':''}</span></div>${v6EditButton('diary',x.id)}</div>`).join('')||'<div class="empty">第一篇日記，從今天開始。</div>'}</div></div></div>`}
 function taskBoardItem(task, unassigned){
  const taskId=esc(task.id);
+ const title=esc(task.title);
  return `<div class="task-board-item">
-  <label class="task-board-title">
-   <input type="checkbox" aria-label="標記完成：${esc(task.title)}" data-check="tasks" data-id="${taskId}" ${task.done?'checked':''}/>
-   <strong class="${task.done?'done':''}">${esc(task.title)}</strong>
-  </label>
-  <div class="desc">${esc(task.category||'一般')} · ${task.due?fmtDate(task.due):'無期限'}${unassigned?' · 未指定象限':''}</div>
-  <div class="task-board-actions">
-   ${taskDue(task)?'<span class="tag red">到期</span>':''}
-   ${v6EditButton('task',task.id)}
-   <button class="btn subtle sm" data-v10-link-focus="task" data-id="${taskId}">專注這項任務</button>
-   <button class="iconbtn" aria-label="刪除任務：${esc(task.title)}" data-delete="tasks" data-id="${taskId}">×</button>
-  </div>
+  <input class="task-board-check" type="checkbox" aria-label="標記完成：${title}" data-check="tasks" data-id="${taskId}" ${task.done?'checked':''}/>
+  <details class="task-board-details">
+   <summary>
+    <strong class="${task.done?'done':''}">${title}</strong>
+    <span class="desc">${esc(task.category||'一般')} · ${task.due?fmtDate(task.due):'無期限'}${unassigned?' · 未指定象限':''}</span>
+    ${taskDue(task)?'<span class="tag red">到期</span>':''}
+   </summary>
+   <div class="task-board-actions">
+    ${v6EditButton('task',task.id)}
+    <button class="btn subtle sm" data-v10-link-focus="task" data-id="${taskId}">專注這項任務</button>
+    <button class="iconbtn" aria-label="刪除任務：${title}" data-delete="tasks" data-id="${taskId}">×</button>
+   </div>
+  </details>
  </div>`;
 }
 
