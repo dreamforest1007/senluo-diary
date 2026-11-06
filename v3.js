@@ -46,7 +46,7 @@ function v4ThemeChooser(){const effective=v4EffectiveTheme();return `<h3>日常�
 function v4OriginalChooser(effective){return ['天氣','動物','植物'].map(group=>`<h3 style="margin-top:24px">原創・${group}</h3><div class="festivalChoices">${Object.entries(V4_ORIGINAL).filter(([,f])=>f.group===group).map(([key,f])=>`<button class="festivalChoice ${effective===key?'selected':''}" data-v3-theme="${key}" aria-pressed="${effective===key}"><span class="themeSwatches" aria-hidden="true">${f.colors.map(c=>`<i style="background:${c}"></i>`).join('')}</span><strong><span aria-hidden="true">${f.symbol}</span> ${f.name}</strong><span>${f.detail}</span></button>`).join('')}</div>`).join('');}
 document.addEventListener('click',e=>{if(!e.target.closest('[data-v4-auto]'))return;const old=db.settings.holidayAuto;db.settings.holidayAuto=old!==true;if(save()){render();toast(db.settings.holidayAuto?'已開啟節日自動換色':'已關閉節日自動換色');}else{db.settings.holidayAuto=old;toast('設定未能儲存，請先下載備份');}});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&typeof db!=='undefined'&&!(authMode==='account'&&!accountUser))v3Apply();});
-const V3_VERSION='12.0.0';
+const V3_VERSION='12.1.0';
 const V3_WIDGETS=['本月日記','待辦事項','本月支出','本月結餘','智慧提醒','快捷入口','近期待辦','目標進度'];
 const V3_THEMES={forest:'陽光森林',tea:'暖茶書房',sea:'聽瀾海岸',lavender:'暮色花園',spring:'春節團圓',lantern:'元宵燈火',dragon:'端午青粽',moon:'中秋月桂',pumpkin:'萬聖南瓜',christmas:'聖誕松林',sunny:'晴空漫遊',rainy:'雨聲書窗',snow:'初雪小屋',cat:'黑貓茶館',rabbit:'白兔草原',deer:'小鹿林徑',fern:'蕨葉秘境',lotus:'荷風小築',camellia:'山茶花信'};
 function v3Order(){const a=db.settings.widgetOrder;return [...new Set([...(Array.isArray(a)?a:[]),...V3_WIDGETS.map((_,i)=>i)])].filter(i=>Number.isInteger(i)&&i>=0&&i<V3_WIDGETS.length);}
@@ -144,7 +144,7 @@ function v6Normalize(kind,f){const clean=v=>String(v??'').trim();const date=clea
  if(kind==='diary'){if(!clean(f.body))throw Error('請輸入日記內容');return {date,...v9NormalizeMood(f),body:String(f.body),tags:clean(f.tags)};}
  if(kind==='task'){if(!clean(f.title))throw Error('請輸入待辦名稱');if(f.due&&!v6DateOK(f.due))throw Error('請選擇有效期限');return {title:clean(f.title),due:f.due||'',category:clean(f.category)||'生活',quadrant:['q1','q2','q3','q4'].includes(f.quadrant)?f.quadrant:'q2'};}
  if(kind==='transaction'){const amount=Number(f.amount);if(!Number.isFinite(amount)||Math.round(amount*100)<1||amount>1e12)throw Error('請輸入大於 0 的有效金額');return {date,type:f.type==='income'?'income':'expense',amount:Math.round(amount*100)/100,...v11FinanceNormalize(f),note:clean(f.note)};}
- if(kind==='event'){if(!clean(f.title))throw Error('請輸入行程名稱');if(f.time&&!/^([01]\d|2[0-3]):[0-5]\d$/.test(f.time))throw Error('請輸入有效時間');return {date,title:clean(f.title),time:f.time||'',remindAt:v12ReminderValue(f.remindAt)};}
+ if(kind==='event'){if(!clean(f.title))throw Error('請輸入行程名稱');if(f.time&&!/^([01]\d|2[0-3]):[0-5]\d$/.test(f.time))throw Error('請輸入有效時間');return {date,title:clean(f.title),time:f.time||'',...v121EventSettings(f)};}
  if(kind==='health'){const number=(v,max)=>{if(v==='')return '';const n=Number(v);if(!Number.isFinite(n)||n<0||n>max)throw Error('請檢查睡眠或飲水數值');return n;};return {date,mood:['平穩','開心','疲憊','低落','焦慮'].includes(f.mood)?f.mood:'平穩',sleep:number(f.sleep??'',24),water:number(f.water??'',50),note:clean(f.note)};}
  throw Error('找不到這個紀錄類別');
 }
@@ -161,7 +161,7 @@ function v6Fields(kind,r){const date=v6Input('date','日期','date',r.date||toda
  if(kind==='diary')return `${date}${v9MoodFields(r)}${v6Area('body','日記內容',r.body,'今天有什麼想留下來的？')}${v6Input('tags','標籤（以逗號分隔）','text',r.tags,'maxlength="200"')}`;
  if(kind==='task')return `${v6Input('title','待辦名稱','text',r.title,'required maxlength="100" placeholder="想完成的一件小事"')}${v6Input('due','期限（選填）','date',r.due)}${v6Input('category','分類','text',r.category||'生活','maxlength="50"')}${v11QuadrantFields(r.quadrant||'q2')}`;
  if(kind==='transaction')return `<div class="row">${v6Select('type','類型',[['expense','支出'],['income','收入']],r.type||'expense')}${date}</div>${v6Input('amount','金額（NT$）','number',r.amount,'required min="0.01" max="1000000000000" step="0.01" inputmode="decimal" placeholder="0"')}${v11FinanceFields(r)}${v6Input('note','備註（選填）','text',r.note,'maxlength="500"')}`;
- if(kind==='event')return `${v6Input('title','行程名稱','text',r.title,'required maxlength="100"')}<div class="row">${date}${v6Input('time','時間（選填）','time',r.time)}</div>${v12ReminderField(r.remindAt)}`;
+ if(kind==='event')return `${v6Input('title','行程名稱','text',r.title,'required maxlength="100"')}<div class="row">${date}${v6Input('time','時間（選填）','time',r.time)}</div>${v121EventFields(r)}`;
  return `${date}${v6Select('mood','心情狀態',['平穩','開心','疲憊','低落','焦慮'].map(x=>[x,x]),r.mood||'平穩')}<div class="row">${v6Input('sleep','睡眠（小時）','number',r.sleep,'min="0" max="24" step="0.5"')}${v6Input('water','飲水（杯）','number',r.water,'min="0" max="50"')}</div>${v6Area('note','生活備註',r.note)}`;
 }
 function v6FormData(form){return Object.fromEntries(new FormData(form).entries());}
@@ -185,7 +185,7 @@ function v6Undo(){v6UndoQueue=v6UndoQueue.filter(x=>x.expires>Date.now()&&x.owne
 function v6UndoRefresh(){v6UndoQueue=v6UndoQueue.filter(x=>x.expires>Date.now()&&x.owner===v6Owner());let el=document.querySelector('#v6Undo');if(el)el.remove();clearTimeout(v6UndoTimer);if(!v6UndoQueue.length)return;const seconds=Math.max(1,Math.ceil((v6UndoQueue.at(-1).expires-Date.now())/1000));document.querySelector('#content')?.insertAdjacentHTML('afterbegin',`<div id="v6Undo" class="v6Undo" role="status"><span>已刪除紀錄 · ${seconds} 秒內可復原${v6UndoQueue.length>1?'（還有 '+v6UndoQueue.length+' 筆）':''}</span><button class="btn subtle sm" data-v6-undo>復原上一筆</button></div>`);v6UndoTimer=setTimeout(v6UndoRefresh,1000);}
 function v6HandleCheck(e){const t=e.target;if(!t.dataset.check)return false;const key=v6Key(t.dataset.check);if(!['tasks','shopping'].includes(key))return false;const record=db[key].find(x=>x.id===t.dataset.id);if(!record)return true;const before=record.done;if(v6Mutate(()=>{record.done=t.checked;}))render();else t.checked=!!before;return true;}
 function v6EditButton(kind,recordId){return `<button type="button" class="btn subtle sm" data-v6-edit="${kind}" data-id="${esc(recordId)}" aria-label="編輯${V6_KINDS[kind].name}">編輯</button>`;}
-function v6TodayPage(){const day=today(),diary=db.diaries.find(x=>x.date===day),health=db.health.find(x=>x.date===day),tasks=db.tasks.filter(t=>!t.done&&(!t.due||t.due<=day)).sort((a,b)=>(a.due||'9999').localeCompare(b.due||'9999')),events=db.events.filter(x=>x.date===day).sort((a,b)=>(a.time||'99:99').localeCompare(b.time||'99:99')),tx=db.tx.filter(x=>x.date===day),spent=tx.filter(x=>x.type==='expense').reduce((a,x)=>a+num(x.amount),0),msg=dailyHeroMessage();
+function v6TodayPage(){const day=today(),diary=db.diaries.find(x=>x.date===day),health=db.health.find(x=>x.date===day),tasks=db.tasks.filter(t=>!t.done&&(!t.due||t.due<=day)).sort((a,b)=>(a.due||'9999').localeCompare(b.due||'9999')),events=v121EventsOn(day).sort((a,b)=>(a.time||'99:99').localeCompare(b.time||'99:99')),tx=db.tx.filter(x=>x.date===day),spent=tx.filter(x=>x.type==='expense').reduce((a,x)=>a+num(x.amount),0),msg=dailyHeroMessage();
  return `<section class="v6TodayHero"><div><div class="overline">慢慢來，把今天過好。</div><h2>${esc(db.settings.name||'你好')}，今天想從哪裡開始？</h2></div><img src="./icon-192-v5.png?v=5.0.1" alt="" width="96" height="96"/></section><section class="hero dailyHero" aria-label="每日心語"><div class="dailyTop"><div class="overline" style="color:#cce8c7">每日心語</div><span class="dailyDate">${esc(msg.date)}</span></div><h2>${esc(msg.quote)}</h2><p class="dailyDetail">${esc(msg.detail)}</p><div class="dailyFlower">❀ 今日花語｜<strong>${esc(msg.flower.name)}</strong> · ${esc(msg.flower.meaning)}</div></section><div class="v6QuickGrid" aria-label="快速記錄">${[['diary','寫日記','▤'],['task','加待辦','✓'],['transaction','記一筆','＄'],['event','排時間','▦']].map(([kind,n,symbol])=>`<button data-v6-kind="${kind}"><span aria-hidden="true">${symbol}</span>${n}</button>`).join('')}</div>${v12HomeTemplates()}<div class="v6TodayGrid"><section class="card v6Tasks"><div class="sectionhead"><h2>今天要做</h2><span class="tag">${tasks.length} 項</span></div><p class="note">今天、已到期與尚未設定期限的待辦。</p><div class="stack">${tasks.slice(0,5).map(t=>`<div class="item"><input type="checkbox" aria-label="完成${esc(t.title)}" data-check="tasks" data-id="${esc(t.id)}"/><div class="grow"><strong>${esc(t.title)}</strong><span class="desc">${t.due&&t.due<day?'已逾期 · '+fmtDate(t.due):t.due?'今天到期':'未設期限'}</span></div><details><summary>操作</summary><div class="row">${v6EditButton('task',t.id)}<button type="button" class="btn subtle sm" data-v10-link-focus="task" data-id="${esc(t.id)}">專注這項待辦</button></div></details></div>`).join('')||'<div class="v6Empty"><span aria-hidden="true">🌱</span><p>今天還沒有需要處理的待辦。<br/>可以留白，也可以安排一件小事。</p></div>'}</div><button class="btn line sm" data-page="tasks">查看全部待辦</button></section><section class="card"><div class="sectionhead"><h2>今天的行程</h2><button class="btn subtle sm" data-v6-kind="event">新增</button></div><div class="stack">${events.slice(0,5).map(x=>`<div class="v6Event"><time>${esc(x.time||'未定時')}</time><span class="grow">${esc(x.title)}</span>${v6EditButton('event',x.id)}</div>`).join('')||'<div class="v6Empty"><span aria-hidden="true">☀</span><p>今天的時間，還有自由安排的空間。</p></div>'}</div>${events.length>5?'<button class="btn line sm" data-page="calendar">查看全部行程</button>':''}</section><section class="card v6Mood"><div class="sectionhead"><h2>今天的心情</h2><span aria-hidden="true">♡</span></div><p class="v6MoodValue">${esc(diary?.mood||health?.mood||'還沒記下來')}</p><p class="note">${diary?'今天已留下日記。想補充一點什麼嗎？':'不用替今天打分數，留下此刻的感受就好。'}</p><button class="btn subtle" data-v6-kind="diary">${diary?'編輯今天日記':'記下今天'}</button></section><section class="card"><div class="sectionhead"><h2>今天的收支</h2><span class="tag">${tx.length} 筆</span></div><p class="note">今日支出</p><div class="metric">${money(spent)}</div><div class="row"><button class="btn subtle" data-v6-kind="transaction">記一筆收支</button><button class="btn line" data-page="finance">查看明細</button></div></section></div>${v10TodayHabits()}<div class="v6OverviewLink"><button class="btn line" data-page="overview">查看月度總覽與首頁小工具 →</button><p class="note">依目前帳號的實際紀錄整理。雲端狀態可在「帳號與備份」查看。</p></div>`;
 }
 document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||v6Owner()==='locked')return;if(b.dataset.v6Kind)v6Compose(b.dataset.v6Kind);if(b.dataset.v6Edit)v6Compose(b.dataset.v6Edit,b.dataset.id);if(b.hasAttribute('data-v6-close'))v6RequestClose();if(b.hasAttribute('data-v6-undo'))v6Undo();});
@@ -470,9 +470,10 @@ function v12ReminderControls() {
 function v12ReminderInfo(event) {
  let reminder;
  try { reminder = v12ReminderValue(event.remindAt); } catch { return ''; }
- if (!reminder) return '';
- return '<div class="tiny muted">提醒 ' + esc(reminder.replace('T',' ')) + '</div>' +
-  '<button class="btn subtle sm" data-v12-calendar="' + esc(event.id) + '">下載行事曆提醒</button>';
+ const weekly = event.repeat === 'weekly' ? '<div class="tiny muted">每週重複 · 編輯或刪除會套用整組</div>' : '';
+ if (!reminder) return weekly;
+ return weekly + '<div class="tiny muted">提醒 ' + esc(reminder.replace('T',' ')) + '</div>' +
+  '<button class="btn subtle sm" data-v12-calendar="' + esc(event.id) + '" data-v12-date="' + esc(event.date) + '">下載本次提醒</button>';
 }
 const v12Shown = new Map();
 let v12Checking = false;
@@ -490,7 +491,7 @@ async function v12CheckReminders() {
   for (const item of Object.keys(sent)) if (sent[item] < cutoff) delete sent[item];
   v12Shown.set(owner, sent);
   const due = [];
-  for (const event of db.events) {
+  for (const event of v121ReminderEvents(now)) {
    if (!event.remindAt) continue;
    let time;
    try { time = +new Date(v12ReminderValue(event.remindAt)); } catch { continue; }
@@ -525,7 +526,7 @@ function v12CalendarText(event) {
   ? 'DTSTART:' + utc(event.date + 'T' + event.time)
   : 'DTSTART;VALUE=DATE:' + event.date.replace(/-/g,'');
  return ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Sylva Life//Event Reminder//ZH',
-  'BEGIN:VEVENT','UID:' + encodeURIComponent(event.id) + '@sylva-life.local',
+  'BEGIN:VEVENT','UID:' + encodeURIComponent(event.id) + (event.repeat === 'weekly' ? '-' + event.date : '') + '@sylva-life.local',
   'DTSTAMP:' + utc(Date.now()),start,'SUMMARY:' + escapeText(event.title),
   'BEGIN:VALARM','ACTION:DISPLAY','TRIGGER;VALUE=DATE-TIME:' + utc(v12ReminderValue(event.remindAt)),
   'DESCRIPTION:' + escapeText(event.title),'END:VALARM','END:VEVENT','END:VCALENDAR',''].join('\r\n');
@@ -541,7 +542,7 @@ document.addEventListener('click', async event => {
   } catch { toast('將在 App 內顯示提醒'); }
   return;
  }
- const item = db.events.find(record => record.id === button.dataset.v12Calendar);
+ const item = v121EventsOn(button.dataset.v12Date).find(record => record.id === button.dataset.v12Calendar);
  if (!item?.remindAt) return;
  try {
   const url = URL.createObjectURL(new Blob([v12CalendarText(item)], {type:'text/calendar;charset=utf-8'}));
@@ -582,7 +583,7 @@ function v12TemplateFields(kind, form) {
   const {title, category, quadrant} = values;
   return {title, category, quadrant};
  }
- return {title: values.title, time: values.time};
+ return {title: values.title, time: values.time, repeat: values.repeat, lead: values.lead};
 }
 
 function v12HomeTemplates() {
@@ -644,3 +645,70 @@ document.addEventListener('click', event => {
   else toast(error.message);
  }
 });
+
+const V121_LEADS = [
+ ['', '不使用提前提醒'], ['0', '準時'], ['10', '提前 10 分鐘'],
+ ['60', '提前 1 小時'], ['1440', '提前 1 天']
+];
+
+function v121EventSettings(form) {
+ const lead = String(form.lead ?? '');
+ if (!V121_LEADS.some(([value]) => value === lead)) throw Error('請選擇有效的提醒選項');
+ if (lead !== '' && !form.time) throw Error('使用提前或準時提醒時，請先填寫行程時間');
+ return {
+  repeat: form.repeat === 'weekly' ? 'weekly' : '',
+  lead,
+  remindAt: lead === '' ? v12ReminderValue(form.remindAt) : ''
+ };
+}
+
+function v121EventFields(record = {}) {
+ return `<details ${record.repeat || record.remindAt || record.lead ? 'open' : ''}>
+  <summary>重複與提醒</summary>
+  ${v6Select('repeat','重複',[['','只安排一次'],['weekly','每週同一天']],record.repeat || '')}
+  ${v6Select('lead','提醒選項',V121_LEADS,record.lead ?? '')}
+  ${v12ReminderField(record.remindAt)}
+  <p class="note">選了準時或提前提醒，就以行程時間計算，每次重複都會提醒。自訂提醒日期與時間只提醒一次。編輯或刪除每週行程會套用整組。</p>
+ </details>`;
+}
+
+function v121Occurrence(event, date) {
+ if (date < event.date || !v6DateOK(event.date) || !v6DateOK(date)) return null;
+ if (event.date !== date) {
+  if (event.repeat !== 'weekly' || (Date.parse(date) - Date.parse(event.date)) % 604800000 !== 0) return null;
+ }
+ let remindAt = date === event.date ? event.remindAt : '';
+ if (event.time && V121_LEADS.slice(1).some(([value]) => value === event.lead)) {
+  const alarm = new Date(+new Date(date + 'T' + event.time) - Number(event.lead) * 60000);
+  if (Number.isFinite(+alarm)) {
+   const hours = String(alarm.getHours()).padStart(2,'0');
+   const minutes = String(alarm.getMinutes()).padStart(2,'0');
+   remindAt = localDate(alarm) + 'T' + hours + ':' + minutes;
+  }
+ }
+ return {...event, date, remindAt};
+}
+
+function v121EventsOn(date) {
+ return db.events.map(event => v121Occurrence(event,date)).filter(Boolean);
+}
+
+function v121ReminderEvents(now) {
+ const nearby = [];
+ for (let offset = -2; offset <= 2; offset++) {
+  const date = new Date(now);
+  date.setDate(date.getDate() + offset);
+  nearby.push(localDate(date));
+ }
+ const items = [];
+ for (const event of db.events) {
+  if (!event.remindAt && !event.lead) continue;
+  const dates = event.repeat === 'weekly' && event.lead
+   ? new Set([event.date, ...nearby]) : [event.date];
+  for (const date of dates) {
+   const occurrence = v121Occurrence(event,date);
+   if (occurrence?.remindAt) items.push(occurrence);
+  }
+ }
+ return items;
+}
