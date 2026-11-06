@@ -1,7 +1,7 @@
 /* 森羅生活：僅快取此網站必要的靜態檔案；個人資料僅保留在瀏覽器 localStorage。 */
-const CACHE_NAME = 'sylva-life-static-v21-finance-categories-20261107';
+const CACHE_NAME = 'sylva-life-static-v22-event-reminders-20261107';
 const APP_SHELL = [
-  './', './index.html', './manifest.webmanifest?v=5.0.1', './v3.js?v=10.4.0', './v3.css?v=10.3.0', './finance-categories.js?v=1.0.0',
+  './', './index.html', './manifest.webmanifest?v=5.0.1', './v3.js?v=10.5.0', './v3.css?v=10.3.0', './finance-categories.js?v=1.0.0',
   './icon-192-v5.png?v=5.0.1', './icon-512-v5.png?v=5.0.1',
   './icon-maskable-512-v5.png?v=5.0.1', './apple-touch-icon-v5.png?v=5.0.1'
 ];

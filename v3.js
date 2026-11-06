@@ -46,7 +46,7 @@ function v4ThemeChooser(){const effective=v4EffectiveTheme();return `<h3>日常�
 function v4OriginalChooser(effective){return ['天氣','動物','植物'].map(group=>`<h3 style="margin-top:24px">原創・${group}</h3><div class="festivalChoices">${Object.entries(V4_ORIGINAL).filter(([,f])=>f.group===group).map(([key,f])=>`<button class="festivalChoice ${effective===key?'selected':''}" data-v3-theme="${key}" aria-pressed="${effective===key}"><span class="themeSwatches" aria-hidden="true">${f.colors.map(c=>`<i style="background:${c}"></i>`).join('')}</span><strong><span aria-hidden="true">${f.symbol}</span> ${f.name}</strong><span>${f.detail}</span></button>`).join('')}</div>`).join('');}
 document.addEventListener('click',e=>{if(!e.target.closest('[data-v4-auto]'))return;const old=db.settings.holidayAuto;db.settings.holidayAuto=old!==true;if(save()){render();toast(db.settings.holidayAuto?'已開啟節日自動換色':'已關閉節日自動換色');}else{db.settings.holidayAuto=old;toast('設定未能儲存，請先下載備份');}});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&typeof db!=='undefined'&&!(authMode==='account'&&!accountUser))v3Apply();});
-const V3_VERSION='10.4.0';
+const V3_VERSION='10.5.0';
 const V3_WIDGETS=['本月日記','待辦事項','本月支出','本月結餘','智慧提醒','快捷入口','近期待辦','目標進度'];
 const V3_THEMES={forest:'陽光森林',tea:'暖茶書房',sea:'聽瀾海岸',lavender:'暮色花園',spring:'春節團圓',lantern:'元宵燈火',dragon:'端午青粽',moon:'中秋月桂',pumpkin:'萬聖南瓜',christmas:'聖誕松林',sunny:'晴空漫遊',rainy:'雨聲書窗',snow:'初雪小屋',cat:'黑貓茶館',rabbit:'白兔草原',deer:'小鹿林徑',fern:'蕨葉秘境',lotus:'荷風小築',camellia:'山茶花信'};
 function v3Order(){const a=db.settings.widgetOrder;return [...new Set([...(Array.isArray(a)?a:[]),...V3_WIDGETS.map((_,i)=>i)])].filter(i=>Number.isInteger(i)&&i>=0&&i<V3_WIDGETS.length);}
@@ -144,7 +144,7 @@ function v6Normalize(kind,f){const clean=v=>String(v??'').trim();const date=clea
  if(kind==='diary'){if(!clean(f.body))throw Error('請輸入日記內容');return {date,...v9NormalizeMood(f),body:String(f.body),tags:clean(f.tags)};}
  if(kind==='task'){if(!clean(f.title))throw Error('請輸入待辦名稱');if(f.due&&!v6DateOK(f.due))throw Error('請選擇有效期限');return {title:clean(f.title),due:f.due||'',category:clean(f.category)||'生活',quadrant:['q1','q2','q3','q4'].includes(f.quadrant)?f.quadrant:'q2'};}
  if(kind==='transaction'){const amount=Number(f.amount);if(!Number.isFinite(amount)||Math.round(amount*100)<1||amount>1e12)throw Error('請輸入大於 0 的有效金額');return {date,type:f.type==='income'?'income':'expense',amount:Math.round(amount*100)/100,...v11FinanceNormalize(f),note:clean(f.note)};}
- if(kind==='event'){if(!clean(f.title))throw Error('請輸入行程名稱');if(f.time&&!/^([01]\d|2[0-3]):[0-5]\d$/.test(f.time))throw Error('請輸入有效時間');return {date,title:clean(f.title),time:f.time||''};}
+ if(kind==='event'){if(!clean(f.title))throw Error('請輸入行程名稱');if(f.time&&!/^([01]\d|2[0-3]):[0-5]\d$/.test(f.time))throw Error('請輸入有效時間');return {date,title:clean(f.title),time:f.time||'',remindAt:v12ReminderValue(f.remindAt)};}
  if(kind==='health'){const number=(v,max)=>{if(v==='')return '';const n=Number(v);if(!Number.isFinite(n)||n<0||n>max)throw Error('請檢查睡眠或飲水數值');return n;};return {date,mood:['平穩','開心','疲憊','低落','焦慮'].includes(f.mood)?f.mood:'平穩',sleep:number(f.sleep??'',24),water:number(f.water??'',50),note:clean(f.note)};}
  throw Error('找不到這個紀錄類別');
 }
@@ -161,7 +161,7 @@ function v6Fields(kind,r){const date=v6Input('date','日期','date',r.date||toda
  if(kind==='diary')return `${date}${v9MoodFields(r)}${v6Area('body','日記內容',r.body,'今天有什麼想留下來的？')}${v6Input('tags','標籤（以逗號分隔）','text',r.tags,'maxlength="200"')}`;
  if(kind==='task')return `${v6Input('title','待辦名稱','text',r.title,'required maxlength="100" placeholder="想完成的一件小事"')}${v6Input('due','期限（選填）','date',r.due)}${v6Input('category','分類','text',r.category||'生活','maxlength="50"')}${v11QuadrantFields(r.quadrant||'q2')}`;
  if(kind==='transaction')return `<div class="row">${v6Select('type','類型',[['expense','支出'],['income','收入']],r.type||'expense')}${date}</div>${v6Input('amount','金額（NT$）','number',r.amount,'required min="0.01" max="1000000000000" step="0.01" inputmode="decimal" placeholder="0"')}${v11FinanceFields(r)}${v6Input('note','備註（選填）','text',r.note,'maxlength="500"')}`;
- if(kind==='event')return `${v6Input('title','行程名稱','text',r.title,'required maxlength="100"')}<div class="row">${date}${v6Input('time','時間（選填）','time',r.time)}</div>`;
+ if(kind==='event')return `${v6Input('title','行程名稱','text',r.title,'required maxlength="100"')}<div class="row">${date}${v6Input('time','時間（選填）','time',r.time)}</div>${v12ReminderField(r.remindAt)}`;
  return `${date}${v6Select('mood','心情狀態',['平穩','開心','疲憊','低落','焦慮'].map(x=>[x,x]),r.mood||'平穩')}<div class="row">${v6Input('sleep','睡眠（小時）','number',r.sleep,'min="0" max="24" step="0.5"')}${v6Input('water','飲水（杯）','number',r.water,'min="0" max="50"')}</div>${v6Area('note','生活備註',r.note)}`;
 }
 function v6FormData(form){return Object.fromEntries(new FormData(form).entries());}
@@ -445,3 +445,116 @@ function v11PaintMoodSummary(root){const primary=root.querySelector('[name="mood
 function v11MoodChanged(e){const root=e.target.closest?.('.v11MoodFields');if(root)v11PaintMoodSummary(root);}
 document.addEventListener('change',v11MoodChanged);
 document.addEventListener('input',v11MoodChanged);
+
+function v12ReminderValue(value) {
+ const input = String(value || '');
+ if (!input) return '';
+ const [date, time] = input.split('T');
+ const stamp = new Date(input);
+ if (!/^\d{4}-\d{2}-\d{2}T(?:[01]\d|2[0-3]):[0-5]\d$/.test(input) ||
+     !v6DateOK(date) || !Number.isFinite(+stamp) ||
+     stamp.getHours() !== Number(time.slice(0, 2)) || stamp.getMinutes() !== Number(time.slice(3))) {
+  throw Error('請輸入有效的提醒日期與時間');
+ }
+ return input;
+}
+function v12ReminderField(value) {
+ return '<label>提醒時間（選填）<input type="datetime-local" name="remindAt" value="' +
+  esc(value || '') + '"></label>';
+}
+function v12ReminderControls() {
+ return '<p class="note">App 開著時會顯示提醒。需要在關閉 App 後收到通知，可將行程加入支援提醒的手機行事曆。</p>' +
+  (typeof Notification !== 'undefined' && Notification.permission === 'default'
+   ? '<button class="btn subtle sm" data-v12-permission>開啟系統通知</button>' : '');
+}
+function v12ReminderInfo(event) {
+ let reminder;
+ try { reminder = v12ReminderValue(event.remindAt); } catch { return ''; }
+ if (!reminder) return '';
+ return '<div class="tiny muted">提醒 ' + esc(reminder.replace('T',' ')) + '</div>' +
+  '<button class="btn subtle sm" data-v12-calendar="' + esc(event.id) + '">下載行事曆提醒</button>';
+}
+const v12Shown = new Map();
+let v12Checking = false;
+async function v12CheckReminders() {
+ if (v12Checking || !window.sylvaAppBooted) return;
+ const owner = v6Owner();
+ if (owner === 'locked') return;
+ const now = Date.now();
+ const key = 'sylva_event_reminders_v1:' + owner;
+ v12Checking = true;
+ try {
+  let sent = v12Shown.get(owner) || {};
+  try { sent = {...sent, ...JSON.parse(localStorage.getItem(key) || '{}')}; } catch {}
+  const cutoff = now - 86400000;
+  for (const item of Object.keys(sent)) if (sent[item] < cutoff) delete sent[item];
+  v12Shown.set(owner, sent);
+  const due = [];
+  for (const event of db.events) {
+   if (!event.remindAt) continue;
+   let time;
+   try { time = +new Date(v12ReminderValue(event.remindAt)); } catch { continue; }
+   const tag = JSON.stringify([event.id, event.remindAt]);
+   if (time > now || time < cutoff || Object.hasOwn(sent, tag)) continue;
+   sent[tag] = now;
+   due.push({title: String(event.title || '未命名行程'), tag});
+  }
+  if (!due.length) return;
+  try { localStorage.setItem(key, JSON.stringify(sent)); } catch {}
+  const message = due.map(item => item.title).join('、');
+  toast('行程提醒：' + message);
+  if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+   try {
+    const registration = await navigator.serviceWorker?.getRegistration();
+    if (v6Owner() !== owner) return;
+    if (registration?.active) {
+     await registration.showNotification('森羅生活 · 行程提醒', {body: message, tag: 'sylva-events-' + due[0].tag});
+    } else {
+     new Notification('森羅生活 · 行程提醒', {body: message});
+    }
+   } catch {}
+  }
+ } finally {
+  v12Checking = false;
+ }
+}
+function v12CalendarText(event) {
+ const escapeText = value => String(value).replace(/\\/g,'\\\\').replace(/\r\n|\r|\n/g,'\\n').replace(/[,;]/g,'\\$&');
+ const utc = value => new Date(value).toISOString().replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z');
+ const start = event.time
+  ? 'DTSTART:' + utc(event.date + 'T' + event.time)
+  : 'DTSTART;VALUE=DATE:' + event.date.replace(/-/g,'');
+ return ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Sylva Life//Event Reminder//ZH',
+  'BEGIN:VEVENT','UID:' + encodeURIComponent(event.id) + '@sylva-life.local',
+  'DTSTAMP:' + utc(Date.now()),start,'SUMMARY:' + escapeText(event.title),
+  'BEGIN:VALARM','ACTION:DISPLAY','TRIGGER;VALUE=DATE-TIME:' + utc(v12ReminderValue(event.remindAt)),
+  'DESCRIPTION:' + escapeText(event.title),'END:VALARM','END:VEVENT','END:VCALENDAR',''].join('\r\n');
+}
+document.addEventListener('click', async event => {
+ const button = event.target.closest('[data-v12-permission],[data-v12-calendar]');
+ if (!button || v6Owner() === 'locked') return;
+ if (button.hasAttribute('data-v12-permission')) {
+  try {
+   const permission = await Notification.requestPermission();
+   toast(permission === 'granted' ? '已開啟系統通知' : '將在 App 內顯示提醒');
+   if (view === 'calendar') render();
+  } catch { toast('將在 App 內顯示提醒'); }
+  return;
+ }
+ const item = db.events.find(record => record.id === button.dataset.v12Calendar);
+ if (!item?.remindAt) return;
+ try {
+  const url = URL.createObjectURL(new Blob([v12CalendarText(item)], {type:'text/calendar;charset=utf-8'}));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = '森羅生活-行程提醒.ics';
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 30000);
+ } catch { toast('無法匯出此行程的提醒'); }
+});
+window.addEventListener('focus', v12CheckReminders);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) v12CheckReminders(); });
+window.addEventListener('load', () => {
+ v12CheckReminders();
+ setInterval(v12CheckReminders, 1000);
+});
