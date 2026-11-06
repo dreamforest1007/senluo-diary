@@ -74,11 +74,11 @@
  setTimeout(()=>{if(!window.sylvaAppBooted)show();},15000);
 })();
 </script>
-<script src="./v3.js?v=10.5.0"></script>
+<script src="./v3.js?v=12.0.0"></script>
 <script src="./finance-categories.js?v=1.0.0"></script>
 <script>
 'use strict';
-if(typeof v7Context!=='function'||typeof V3_VERSION==='undefined'||V3_VERSION!=='10.5.0')throw new Error('sylva-runtime-version-mismatch');
+if(typeof v7Context!=='function'||typeof V3_VERSION==='undefined'||V3_VERSION!=='12.0.0')throw new Error('sylva-runtime-version-mismatch');
 const K='sylva_life_merge_v1';
 const DEFAULT={version:1,diaries:[],tasks:[],events:[],tx:[],budget:15000,recurring:[],goals:[],health:[],shopping:[],inventory:[],habits:[],settings:{name:'',theme:'forest'}};
 const pages=[['home','今天','home'],['overview','月度總覽','target'],['diary','森日記','book'],['tasks','任務管理','check'],['habits','習慣打卡','check'],['calendar','行事曆','calendar'],['finance','財務管理','wallet'],['goals','目標管理','target'],['health','健康紀錄','heart'],['lists','購物與收納','list'],['focus','專注計時','timer'],['hub','智慧中樞','cpu'],['themes','主題館','target'],['settings','帳號與備份','settings'],['more','更多','list']];

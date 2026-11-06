@@ -46,7 +46,7 @@ function v4ThemeChooser(){const effective=v4EffectiveTheme();return `<h3>日常�
 function v4OriginalChooser(effective){return ['天氣','動物','植物'].map(group=>`<h3 style="margin-top:24px">原創・${group}</h3><div class="festivalChoices">${Object.entries(V4_ORIGINAL).filter(([,f])=>f.group===group).map(([key,f])=>`<button class="festivalChoice ${effective===key?'selected':''}" data-v3-theme="${key}" aria-pressed="${effective===key}"><span class="themeSwatches" aria-hidden="true">${f.colors.map(c=>`<i style="background:${c}"></i>`).join('')}</span><strong><span aria-hidden="true">${f.symbol}</span> ${f.name}</strong><span>${f.detail}</span></button>`).join('')}</div>`).join('');}
 document.addEventListener('click',e=>{if(!e.target.closest('[data-v4-auto]'))return;const old=db.settings.holidayAuto;db.settings.holidayAuto=old!==true;if(save()){render();toast(db.settings.holidayAuto?'已開啟節日自動換色':'已關閉節日自動換色');}else{db.settings.holidayAuto=old;toast('設定未能儲存，請先下載備份');}});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&typeof db!=='undefined'&&!(authMode==='account'&&!accountUser))v3Apply();});
-const V3_VERSION='10.5.0';
+const V3_VERSION='12.0.0';
 const V3_WIDGETS=['本月日記','待辦事項','本月支出','本月結餘','智慧提醒','快捷入口','近期待辦','目標進度'];
 const V3_THEMES={forest:'陽光森林',tea:'暖茶書房',sea:'聽瀾海岸',lavender:'暮色花園',spring:'春節團圓',lantern:'元宵燈火',dragon:'端午青粽',moon:'中秋月桂',pumpkin:'萬聖南瓜',christmas:'聖誕松林',sunny:'晴空漫遊',rainy:'雨聲書窗',snow:'初雪小屋',cat:'黑貓茶館',rabbit:'白兔草原',deer:'小鹿林徑',fern:'蕨葉秘境',lotus:'荷風小築',camellia:'山茶花信'};
 function v3Order(){const a=db.settings.widgetOrder;return [...new Set([...(Array.isArray(a)?a:[]),...V3_WIDGETS.map((_,i)=>i)])].filter(i=>Number.isInteger(i)&&i>=0&&i<V3_WIDGETS.length);}
@@ -112,7 +112,7 @@ function v5Catalog(){return Object.entries(V3_THEMES).map(([id,name])=>({id,name
 function v5Favorites(){return Array.isArray(db.settings.favoriteThemes)?db.settings.favoriteThemes.filter(id=>Object.hasOwn(V3_THEMES,id)):[];}
 function v5ThemeCards(){const fav=v5Favorites(),active=v4EffectiveTheme();const list=v5Catalog().filter(t=>(v5ThemeGroup==='全部'||v5ThemeGroup==='收藏'&&fav.includes(t.id)||t.group===v5ThemeGroup)&&(!v5ThemeSearch||(t.name+t.group+t.detail).includes(v5ThemeSearch)));return `<p class="note">${list.length} 款主題</p><div class="v5ThemeGrid">${list.map(t=>`<article class="v5ThemeCard ${active===t.id?'selected':''}"><button class="v5ThemeApply" data-v3-theme="${t.id}" aria-pressed="${active===t.id}" aria-label="套用${t.name}"><span class="v5ThemeArt ${t.group==='星座'?'zodiacArt':''}" style="--tile-bg:${t.colors[0]};--tile-ink:${t.colors[1]}"><span aria-hidden="true">${t.symbol}</span><i aria-hidden="true">✦</i></span><span class="v5ThemeName">${esc(t.name)}</span><span class="v5ThemeDesc">${t.group} · ${active===t.id?'使用中':esc(t.detail)}</span></button><button class="v5Favorite" data-v5-favorite="${t.id}" aria-label="${fav.includes(t.id)?'取消收藏':'收藏'}${t.name}" aria-pressed="${fav.includes(t.id)}">${fav.includes(t.id)?'★':'☆'}</button></article>`).join('')}</div>${list.length?'':'<div class="empty">沒有符合的主題，試試其他關鍵字或分類。</div>'}`;}
 function themesPage(){return `<section class="v5GalleryIntro"><span class="overline">讓生活換一種心情</span><h2>你的主題館</h2><p class="note">43 款色調與裝飾，隨時換成喜歡的樣子。選擇後自動儲存。</p><div class="row"><span class="tag">目前：${esc(V3_THEMES[v4EffectiveTheme()]||'陽光森林')}</span><button class="btn subtle sm" data-v4-auto>節日自動換色：${db.settings.holidayAuto===true?'開啟':'關閉'}</button></div></section><div class="v5ThemeToolbar"><label for="v5ThemeSearch" class="note">搜尋主題</label><input id="v5ThemeSearch" class="control" type="search" placeholder="搜尋星座、節日、貓、立春…" value="${esc(v5ThemeSearch)}"/><div class="v5ThemeTabs" role="group" aria-label="主題分類">${['全部','收藏','日常','節日','天氣','動物','植物','星座','十二節期'].map(group=>`<button class="chip ${group===v5ThemeGroup?'active':''}" data-v5-group="${group}" aria-pressed="${group===v5ThemeGroup}">${group}</button>`).join('')}</div></div><div id="v5ThemeResults">${v5ThemeCards()}</div><details class="v5Details"><summary>自動換色與節期說明</summary><p class="note">自動換色預設關閉，開啟後會在節日換色，平日回到你選的主題；手動選主題會關閉自動切換。農曆節日已核對 2026–2028 年。星座與十二節期皆可全年手選，不參與自動切換。</p><p class="note">十二節期採二十四節氣中的十二個「節」：立春、驚蟄、清明、立夏、芒種、小暑、立秋、白露、寒露、立冬、大雪、小寒。</p></details>`;}
-function v5LayoutSettings(){const order=v3Order();return `<div class="card span12"><div class="sectionhead"><h2>首頁與外觀</h2><button class="btn subtle" data-page="themes">前往主題館</button></div><details class="v5Details"><summary>調整首頁卡片順序</summary><div class="stack">${order.map((id,i)=>`<div class="item"><span class="grow">${V3_WIDGETS[id]}</span><button class="btn subtle sm" data-v3-move="${id}" data-direction="-1" aria-label="將${V3_WIDGETS[id]}上移" ${i===0?'disabled':''}>↑</button><button class="btn subtle sm" data-v3-move="${id}" data-direction="1" aria-label="將${V3_WIDGETS[id]}下移" ${i===order.length-1?'disabled':''}>↓</button></div>`).join('')}</div></details><div class="sep"></div><h3>關於森羅生活</h3><p class="note">森羅之心 × 森日記 · V10 · 你的生活空間 · 可選擇自動雲端同步</p><p class="note">程式版本：${V3_VERSION}</p><button class="btn subtle" data-v3-update>檢查程式更新</button><p id="v3UpdateStatus" class="note" role="status"></p></div>`;}
+function v5LayoutSettings(){const order=v3Order();return `<div class="card span12"><div class="sectionhead"><h2>首頁與外觀</h2><button class="btn subtle" data-page="themes">前往主題館</button></div><details class="v5Details"><summary>調整首頁卡片順序</summary><div class="stack">${order.map((id,i)=>`<div class="item"><span class="grow">${V3_WIDGETS[id]}</span><button class="btn subtle sm" data-v3-move="${id}" data-direction="-1" aria-label="將${V3_WIDGETS[id]}上移" ${i===0?'disabled':''}>↑</button><button class="btn subtle sm" data-v3-move="${id}" data-direction="1" aria-label="將${V3_WIDGETS[id]}下移" ${i===order.length-1?'disabled':''}>↓</button></div>`).join('')}</div></details><div class="sep"></div><h3>關於森羅生活</h3><p class="note">森羅之心 × 森日記 · V12 · 你的生活空間 · 可選擇自動雲端同步</p><p class="note">程式版本：${V3_VERSION}</p><button class="btn subtle" data-v3-update>檢查程式更新</button><p id="v3UpdateStatus" class="note" role="status"></p></div>`;}
 function morePage(){const links=[['themes','主題館','星座、節日與自然色調','✦'],['settings','帳號與備份','登入、資料匯出與歷史備份','☁'],['overview','月度總覽','統計與自訂首頁小工具','▥'],['calendar','行事曆','安排接下來的日子','▦'],['goals','目標管理','把長期心願拆成小步','◎'],['health','健康紀錄','記錄生理期、心情、睡眠與飲水','♡'],['lists','購物與收納','採買清單與物品位置','▤'],['habits','習慣打卡','每天留下一次小小累積','✓'],['focus','專注計時','留一段專心的時間','◷'],['hub','生活提醒','查看依紀錄產生的提示','◌']];return `<div class="v5MoreGrid">${links.map(([page,title,note,symbol])=>`<button class="v5MoreCard" data-page="${page}"><span class="v5MoreSymbol" aria-hidden="true">${symbol}</span><span><strong>${title}</strong><small>${note}</small></span><span aria-hidden="true">›</span></button>`).join('')}</div><details class="v5Details"><summary>第一次使用？從這裡開始</summary><ol class="note"><li>選擇本機使用，或以 Google 登入建立自己的空間。</li><li>用「新增」記一筆日記、任務、收支或行程。</li><li>到主題館選喜歡的風格，再到帳號與備份保留 JSON。</li></ol><p class="note">資料先儲存在目前裝置。登入 Google 並不等於已備份；可在帳號與備份開啟自動同步。切換帳號會使用各自獨立的本機資料區。</p></details>`;}
 let v5AuthSlow=false,v5AuthFailure=false;
 function v5CoverHtml(){return `<section class="v5Cover" role="status" aria-live="polite"><div class="v5CoverMark" aria-hidden="true" style="background:transparent;box-shadow:none"><img src="./icon-192-v5.png?v=5.0.1" alt="" width="82" height="82" style="display:block;border-radius:25px"/></div><span class="v5CoverEyebrow">把日子，過成喜歡的樣子。</span><h1>森羅生活</h1><p>${v5AuthFailure?'目前無法連接登入服務':v5AuthSlow?'登入確認比平常久一點':'正在開啟你的生活空間'}</p><div class="v5CoverLine" aria-hidden="true"></div>${v5AuthSlow||v5AuthFailure?'<p class="note">本機紀錄仍會保留。請確認網路後重試。</p><button class="btn" data-v5-retry>重新連線</button>':''}</section>`;}
@@ -168,9 +168,9 @@ function v6FormData(form){return Object.fromEntries(new FormData(form).entries()
 function v6Dirty(){const f=document.querySelector('#v6Composer form');return !!(f&&v6Editor&&JSON.stringify(v6FormData(f))!==v6Editor.initial);}
 function v6RequestClose(){if(v6Dirty()&&!confirm('這裡有尚未儲存的內容，要放棄這次編輯嗎？'))return false;document.querySelector('#v6Composer')?.close();return true;}
 function v6Dialog(){let d=document.querySelector('#v6Composer');if(!d){d=document.createElement('dialog');d.id='v6Composer';d.setAttribute('aria-labelledby','v6ComposerTitle');d.addEventListener('cancel',e=>{e.preventDefault();v6RequestClose();});d.addEventListener('close',()=>{if(!d.open){v6Editor=null;d.innerHTML='';}});document.body.append(d);}return d;}
-function v6Compose(kind,recordId){if(v6Owner()==='locked')return;const spec=V6_KINDS[kind];if(!spec)return;if(v6Dirty()&&!confirm('切換類別會放棄尚未儲存的內容，確定切換嗎？'))return;
- let r=recordId?db[spec.key].find(x=>x.id===recordId):['diary','health'].includes(kind)?db[spec.key].find(x=>x.date===today()):null;if(recordId&&!r){toast('這筆紀錄已不存在');return;}r=r||{};
- const d=v6Dialog();v6Editor={kind,owner:v6Owner(),id:r.id||null,before:r.id?JSON.stringify(r):null,initial:null};d.innerHTML=`<div class="v6Sheet"><div class="sectionhead"><div><span class="overline">留住生活的小片刻</span><h2 id="v6ComposerTitle">${r.id?'編輯':'新增'}${spec.name}</h2></div><button type="button" class="btn subtle sm" data-v6-close>關閉</button></div><div class="v6ComposerTabs" aria-label="紀錄類別">${Object.entries(V6_KINDS).map(([k,v])=>`<button type="button" class="chip ${k===kind?'active':''}" data-v6-kind="${k}" aria-pressed="${k===kind}">${v.name}</button>`).join('')}</div><form data-form="v6-record" class="stack">${v6Fields(kind,r)}<p id="v6FormError" class="v6FormError" role="alert"></p><div class="v6FormActions"><button type="button" class="btn subtle" data-v6-close>取消</button><button type="submit" class="btn">${r.id?'儲存修改':'儲存'+spec.name}</button></div><p class="note">先儲存到此裝置；開啟自動同步後，連線時會自動上傳。</p></form></div>`;
+function v6Compose(kind,recordId,prefill){if(v6Owner()==='locked')return;const spec=V6_KINDS[kind];if(!spec)return;if(v6Dirty()&&!confirm('切換類別會放棄尚未儲存的內容，確定切換嗎？'))return;
+ let r=recordId?db[spec.key].find(x=>x.id===recordId):['diary','health'].includes(kind)?db[spec.key].find(x=>x.date===today()):null;if(recordId&&!r){toast('這筆紀錄已不存在');return;}r=r||prefill||{};
+ const d=v6Dialog();v6Editor={kind,owner:v6Owner(),id:r.id||null,before:r.id?JSON.stringify(r):null,initial:null};d.innerHTML=`<div class="v6Sheet"><div class="sectionhead"><div><span class="overline">留住生活的小片刻</span><h2 id="v6ComposerTitle">${r.id?'編輯':'新增'}${spec.name}</h2></div><button type="button" class="btn subtle sm" data-v6-close>關閉</button></div><div class="v6ComposerTabs" aria-label="紀錄類別">${Object.entries(V6_KINDS).map(([k,v])=>`<button type="button" class="chip ${k===kind?'active':''}" data-v6-kind="${k}" aria-pressed="${k===kind}">${v.name}</button>`).join('')}</div><form data-form="v6-record" class="stack">${v6Fields(kind,r)}${!r.id&&V12_TEMPLATE_KINDS.includes(kind)?'<button type="button" class="btn line sm" data-v12-save-template>存為常用範本</button>':''}<p id="v6FormError" class="v6FormError" role="alert"></p><div class="v6FormActions"><button type="button" class="btn subtle" data-v6-close>取消</button><button type="submit" class="btn">${r.id?'儲存修改':'儲存'+spec.name}</button></div><p class="note">先儲存到此裝置；開啟自動同步後，連線時會自動上傳。</p></form></div>`;
  v6Editor.initial=JSON.stringify(v6FormData(d.querySelector('form')));if(!d.open)d.showModal();d.querySelector('input:not([type="date"]),textarea,select')?.focus();
 }
 function v6QuickPicker(){const kind=({diary:'diary',tasks:'task',finance:'transaction',calendar:'event',health:'health'})[view]||'task';v6Compose(kind);}
@@ -186,7 +186,7 @@ function v6UndoRefresh(){v6UndoQueue=v6UndoQueue.filter(x=>x.expires>Date.now()&
 function v6HandleCheck(e){const t=e.target;if(!t.dataset.check)return false;const key=v6Key(t.dataset.check);if(!['tasks','shopping'].includes(key))return false;const record=db[key].find(x=>x.id===t.dataset.id);if(!record)return true;const before=record.done;if(v6Mutate(()=>{record.done=t.checked;}))render();else t.checked=!!before;return true;}
 function v6EditButton(kind,recordId){return `<button type="button" class="btn subtle sm" data-v6-edit="${kind}" data-id="${esc(recordId)}" aria-label="編輯${V6_KINDS[kind].name}">編輯</button>`;}
 function v6TodayPage(){const day=today(),diary=db.diaries.find(x=>x.date===day),health=db.health.find(x=>x.date===day),tasks=db.tasks.filter(t=>!t.done&&(!t.due||t.due<=day)).sort((a,b)=>(a.due||'9999').localeCompare(b.due||'9999')),events=db.events.filter(x=>x.date===day).sort((a,b)=>(a.time||'99:99').localeCompare(b.time||'99:99')),tx=db.tx.filter(x=>x.date===day),spent=tx.filter(x=>x.type==='expense').reduce((a,x)=>a+num(x.amount),0),msg=dailyHeroMessage();
- return `<section class="v6TodayHero"><div><div class="overline">慢慢來，把今天過好。</div><h2>${esc(db.settings.name||'你好')}，今天想從哪裡開始？</h2></div><img src="./icon-192-v5.png?v=5.0.1" alt="" width="96" height="96"/></section><section class="hero dailyHero" aria-label="每日心語"><div class="dailyTop"><div class="overline" style="color:#cce8c7">每日心語</div><span class="dailyDate">${esc(msg.date)}</span></div><h2>${esc(msg.quote)}</h2><p class="dailyDetail">${esc(msg.detail)}</p><div class="dailyFlower">❀ 今日花語｜<strong>${esc(msg.flower.name)}</strong> · ${esc(msg.flower.meaning)}</div></section><div class="v6QuickGrid" aria-label="快速記錄">${[['diary','寫日記','▤'],['task','加待辦','✓'],['transaction','記一筆','＄'],['event','排時間','▦']].map(([kind,n,symbol])=>`<button data-v6-kind="${kind}"><span aria-hidden="true">${symbol}</span>${n}</button>`).join('')}</div><div class="v6TodayGrid"><section class="card v6Tasks"><div class="sectionhead"><h2>今天要做</h2><span class="tag">${tasks.length} 項</span></div><p class="note">今天、已到期與尚未設定期限的待辦。</p><div class="stack">${tasks.slice(0,5).map(t=>`<div class="item"><input type="checkbox" aria-label="完成${esc(t.title)}" data-check="tasks" data-id="${esc(t.id)}"/><div class="grow"><strong>${esc(t.title)}</strong><span class="desc">${t.due&&t.due<day?'已逾期 · '+fmtDate(t.due):t.due?'今天到期':'未設期限'}</span></div>${v6EditButton('task',t.id)}</div>`).join('')||'<div class="v6Empty"><span aria-hidden="true">🌱</span><p>今天還沒有需要處理的待辦。<br/>可以留白，也可以安排一件小事。</p></div>'}</div><button class="btn line sm" data-page="tasks">查看全部待辦</button></section><section class="card"><div class="sectionhead"><h2>今天的行程</h2><button class="btn subtle sm" data-v6-kind="event">新增</button></div><div class="stack">${events.slice(0,5).map(x=>`<div class="v6Event"><time>${esc(x.time||'未定時')}</time><span class="grow">${esc(x.title)}</span>${v6EditButton('event',x.id)}</div>`).join('')||'<div class="v6Empty"><span aria-hidden="true">☀</span><p>今天的時間，還有自由安排的空間。</p></div>'}</div>${events.length>5?'<button class="btn line sm" data-page="calendar">查看全部行程</button>':''}</section><section class="card v6Mood"><div class="sectionhead"><h2>今天的心情</h2><span aria-hidden="true">♡</span></div><p class="v6MoodValue">${esc(diary?.mood||health?.mood||'還沒記下來')}</p><p class="note">${diary?'今天已留下日記。想補充一點什麼嗎？':'不用替今天打分數，留下此刻的感受就好。'}</p><button class="btn subtle" data-v6-kind="diary">${diary?'編輯今天日記':'記下今天'}</button></section><section class="card"><div class="sectionhead"><h2>今天的收支</h2><span class="tag">${tx.length} 筆</span></div><p class="note">今日支出</p><div class="metric">${money(spent)}</div><div class="row"><button class="btn subtle" data-v6-kind="transaction">記一筆收支</button><button class="btn line" data-page="finance">查看明細</button></div></section></div>${v10TodayHabits()}<div class="v6OverviewLink"><button class="btn line" data-page="overview">查看月度總覽與首頁小工具 →</button><p class="note">依目前帳號的實際紀錄整理。雲端狀態可在「帳號與備份」查看。</p></div>`;
+ return `<section class="v6TodayHero"><div><div class="overline">慢慢來，把今天過好。</div><h2>${esc(db.settings.name||'你好')}，今天想從哪裡開始？</h2></div><img src="./icon-192-v5.png?v=5.0.1" alt="" width="96" height="96"/></section><section class="hero dailyHero" aria-label="每日心語"><div class="dailyTop"><div class="overline" style="color:#cce8c7">每日心語</div><span class="dailyDate">${esc(msg.date)}</span></div><h2>${esc(msg.quote)}</h2><p class="dailyDetail">${esc(msg.detail)}</p><div class="dailyFlower">❀ 今日花語｜<strong>${esc(msg.flower.name)}</strong> · ${esc(msg.flower.meaning)}</div></section><div class="v6QuickGrid" aria-label="快速記錄">${[['diary','寫日記','▤'],['task','加待辦','✓'],['transaction','記一筆','＄'],['event','排時間','▦']].map(([kind,n,symbol])=>`<button data-v6-kind="${kind}"><span aria-hidden="true">${symbol}</span>${n}</button>`).join('')}</div>${v12HomeTemplates()}<div class="v6TodayGrid"><section class="card v6Tasks"><div class="sectionhead"><h2>今天要做</h2><span class="tag">${tasks.length} 項</span></div><p class="note">今天、已到期與尚未設定期限的待辦。</p><div class="stack">${tasks.slice(0,5).map(t=>`<div class="item"><input type="checkbox" aria-label="完成${esc(t.title)}" data-check="tasks" data-id="${esc(t.id)}"/><div class="grow"><strong>${esc(t.title)}</strong><span class="desc">${t.due&&t.due<day?'已逾期 · '+fmtDate(t.due):t.due?'今天到期':'未設期限'}</span></div><details><summary>操作</summary><div class="row">${v6EditButton('task',t.id)}<button type="button" class="btn subtle sm" data-v10-link-focus="task" data-id="${esc(t.id)}">專注這項待辦</button></div></details></div>`).join('')||'<div class="v6Empty"><span aria-hidden="true">🌱</span><p>今天還沒有需要處理的待辦。<br/>可以留白，也可以安排一件小事。</p></div>'}</div><button class="btn line sm" data-page="tasks">查看全部待辦</button></section><section class="card"><div class="sectionhead"><h2>今天的行程</h2><button class="btn subtle sm" data-v6-kind="event">新增</button></div><div class="stack">${events.slice(0,5).map(x=>`<div class="v6Event"><time>${esc(x.time||'未定時')}</time><span class="grow">${esc(x.title)}</span>${v6EditButton('event',x.id)}</div>`).join('')||'<div class="v6Empty"><span aria-hidden="true">☀</span><p>今天的時間，還有自由安排的空間。</p></div>'}</div>${events.length>5?'<button class="btn line sm" data-page="calendar">查看全部行程</button>':''}</section><section class="card v6Mood"><div class="sectionhead"><h2>今天的心情</h2><span aria-hidden="true">♡</span></div><p class="v6MoodValue">${esc(diary?.mood||health?.mood||'還沒記下來')}</p><p class="note">${diary?'今天已留下日記。想補充一點什麼嗎？':'不用替今天打分數，留下此刻的感受就好。'}</p><button class="btn subtle" data-v6-kind="diary">${diary?'編輯今天日記':'記下今天'}</button></section><section class="card"><div class="sectionhead"><h2>今天的收支</h2><span class="tag">${tx.length} 筆</span></div><p class="note">今日支出</p><div class="metric">${money(spent)}</div><div class="row"><button class="btn subtle" data-v6-kind="transaction">記一筆收支</button><button class="btn line" data-page="finance">查看明細</button></div></section></div>${v10TodayHabits()}<div class="v6OverviewLink"><button class="btn line" data-page="overview">查看月度總覽與首頁小工具 →</button><p class="note">依目前帳號的實際紀錄整理。雲端狀態可在「帳號與備份」查看。</p></div>`;
 }
 document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||v6Owner()==='locked')return;if(b.dataset.v6Kind)v6Compose(b.dataset.v6Kind);if(b.dataset.v6Edit)v6Compose(b.dataset.v6Edit,b.dataset.id);if(b.hasAttribute('data-v6-close'))v6RequestClose();if(b.hasAttribute('data-v6-undo'))v6Undo();});
 
@@ -557,4 +557,90 @@ document.addEventListener('visibilitychange', () => { if (!document.hidden) v12C
 window.addEventListener('load', () => {
  v12CheckReminders();
  setInterval(v12CheckReminders, 1000);
+});
+
+const V12_TEMPLATE_KINDS = ['transaction', 'task', 'event'];
+
+function v12Templates() {
+ const saved = db.settings.quickTemplates;
+ if (!Array.isArray(saved)) return [];
+ return saved.filter(item => item && typeof item.id === 'string' &&
+  typeof item.label === 'string' && V12_TEMPLATE_KINDS.includes(item.kind) &&
+  item.fields && typeof item.fields === 'object').slice(0, 3);
+}
+
+function v12TemplateFields(kind, form) {
+ if (!V12_TEMPLATE_KINDS.includes(kind)) throw Error('這類紀錄無法存為範本');
+ const values = v6Normalize(kind, {
+  ...form, date: today(), due: '', remindAt: '', amount: '1'
+ });
+ if (kind === 'transaction') {
+  const {type, category, subcategory, note} = values;
+  return {type, category, subcategory, note};
+ }
+ if (kind === 'task') {
+  const {title, category, quadrant} = values;
+  return {title, category, quadrant};
+ }
+ return {title: values.title, time: values.time};
+}
+
+function v12HomeTemplates() {
+ const list = v12Templates();
+ if (!list.length) return '';
+ return `<section class="card" aria-label="常用範本">
+  <div class="sectionhead"><h2>常用範本</h2></div>
+  <div class="chiprow">${list.map(item =>
+   `<button type="button" class="btn subtle sm" data-v12-use-template="${esc(item.id)}">${esc(item.label)}</button>`
+  ).join('')}</div>
+  <details><summary>管理範本</summary>
+   <div class="stack">${list.map(item =>
+    `<div class="item"><span class="grow">${esc(item.label)}</span><button type="button" class="btn line sm" data-v12-remove-template="${esc(item.id)}">移除</button></div>`
+   ).join('')}</div>
+  </details>
+ </section>`;
+}
+
+document.addEventListener('click', event => {
+ const button = event.target.closest('button[data-v12-save-template],button[data-v12-use-template],button[data-v12-remove-template]');
+ if (!button || v6Owner() === 'locked') return;
+ const owner = v6Owner();
+ const list = v12Templates();
+ try {
+  if (button.hasAttribute('data-v12-save-template')) {
+   const form = button.closest('form');
+   const editor = v6Editor;
+   if (!form || !editor || editor.id || editor.owner !== owner) return;
+   if (list.length >= 3) throw Error('首頁可放 3 個範本，請先在首頁移除一個');
+   const fields = v12TemplateFields(editor.kind, v6FormData(form));
+   const suggested = fields.title || fields.subcategory || fields.category;
+   const label = prompt('幫這個常用範本取個名字', suggested)?.trim();
+   if (!label || owner !== v6Owner()) return;
+   if (label.length > 24) throw Error('範本名稱最多 24 字');
+   if (list.some(item => item.label === label)) throw Error('已有同名的範本');
+   if (v6Mutate(() => {
+    db.settings.quickTemplates = [...list, {id: id(), kind: editor.kind, label, fields}];
+   })) {
+    form.querySelector('#v6FormError').textContent = '已存到首頁的常用範本';
+    if (view === 'home') render();
+    toast('已儲存常用範本');
+   }
+   return;
+  }
+  const key = button.dataset.v12UseTemplate || button.dataset.v12RemoveTemplate;
+  const template = list.find(item => item.id === key);
+  if (!template) return;
+  if (button.hasAttribute('data-v12-use-template')) {
+   const fields = v12TemplateFields(template.kind, template.fields);
+   v6Compose(template.kind, null, fields);
+  } else if (confirm('移除「' + template.label + '」範本？') && owner === v6Owner()) {
+   if (v6Mutate(() => {
+    db.settings.quickTemplates = list.filter(item => item.id !== key);
+   })) render();
+  }
+ } catch (error) {
+  const feedback = button.closest('form')?.querySelector('#v6FormError');
+  if (feedback) feedback.textContent = error.message;
+  else toast(error.message);
+ }
 });
